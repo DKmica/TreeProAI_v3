@@ -341,3 +341,37 @@ This phase does not include app packages yet, so Turbo will run with no targets 
 - This phase completes the frontend-backend integration
 - All data is now fetched from the real API
 - Forms and mutations are implemented with proper validation
+
+## Phase 8 — Quote Builder & PDF Generation
+
+- Quote Builder UI showing AI findings with editable line items
+- PDF generation for quotes using browser print or library
+- Stripe payment link integration for invoices
+- Quote actions: Send Quote (email), Accept → Create Job
+
+### Files
+
+- apps/web/app/(app)/quotes/[id]/page.tsx (quote builder)
+- apps/web/app/(app)/invoices/page.tsx (payment links)
+- apps/web/app/(app)/customers/page.tsx
+
+### Commands (run from /treeproai)
+
+- Ensure API is running:
+  - pnpm --filter @treeproai/api dev
+- Run frontend:
+  - pnpm --filter @treeproai/web dev
+- Visit: http://localhost:3000
+
+### DONE WHEN
+
+- Quote builder loads AI findings and allows editing
+- PDF generation works for quotes
+- Invoices page shows payment status and links
+- Quote actions (send/accept) work correctly
+
+### Notes
+
+- This phase implements the core business workflow
+- Quotes can be edited, sent to customers, and accepted
+- Invoices can be paid via Stripe payment links
