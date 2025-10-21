@@ -152,3 +152,46 @@ This phase does not include app packages yet, so Turbo will run with no targets 
 
 - In local dev without Clerk keys, supply x-dev-user and x-role headers; with Clerk keys set, pass a real Bearer token and x-role for RBAC.
 - All create/list operations are tenant-scoped via the x-company-id header.
+
+## Phase 3 — AI Services Scaffolds (FastAPI)
+
+- Two FastAPI services with health checks, OpenAPI docs, and deterministic fallbacks.
+- ai-vision: tree detection heuristics using EXIF and reference scaling.
+- ai-pricing: deterministic pricing math and lead scoring.
+
+### Files
+
+- services/ai-vision/app.py with POST /analyze
+- services/ai-pricing/app.py with POST /price and POST /score
+- requirements.txt for both
+- tests/test_*.py for pytest coverage
+
+### Commands (run from /treeproai)
+
+- Install Python deps:
+  - pip install -r services/ai-vision/requirements.txt
+  - pip install -r services/ai-pricing/requirements.txt
+
+- Run services:
+  - uvicorn services.ai-vision.app:app --port 8001 --reload
+  - uvicorn services.ai-pricing.app:app --port 8002 --reload
+
+- Test endpoints:
+  - curl http://localhost:8001/healthz
+  - curl http://localhost:8002/healthz
+  - Visit docs:
+    - http://localhost:8001/docs
+    - http://localhost:8002/docs
+
+### DONE WHEN
+
+- Both services start and return {"ok": true} on /healthz
+- /docs shows the defined endpoints for both services
+- /analyze and /price return valid structured JSON (mock data)
+- Pytest unit tests pass
+
+### Notes
+
+- These services run independently and can be called by the NestJS API later.
+- Pricing uses deterministic formulas; vision uses reference object scaling.
+- No paid models required yet; all logic is self-contained heuristics.
