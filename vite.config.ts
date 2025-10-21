@@ -5,7 +5,9 @@ import { defineConfig } from "vite"
 export default defineConfig({
   plugins: [
     react({
-      plugins: [["@dyad-sh/react-vite-component-tagger", {}]],
+      plugins: [
+        // ["@dyad-sh/react-vite-component-tagger", {}]
+      ],
     }),
   ],
   resolve: {
