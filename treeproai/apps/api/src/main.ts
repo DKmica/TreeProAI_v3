@@ -2,7 +2,7 @@ import "reflect-metadata";
 import "dotenv/config";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
-import { ValidationPipe } from "@nestjs/common";
+import { ValidationPipe, RequestMethod } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { json } from "express";
 
@@ -15,7 +15,7 @@ async function bootstrap() {
 
   // Global prefix for versioned API, excluding health endpoints
   app.setGlobalPrefix("v1", {
-    exclude: [{ path: "healthz", method: "GET" }, { path: "readyz", method: "GET" }]
+    exclude: [{ path: "healthz", method: RequestMethod.GET }, { path: "readyz", method: RequestMethod.GET }]
   });
 
   // OpenAPI
