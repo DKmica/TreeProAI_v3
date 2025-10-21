@@ -195,3 +195,34 @@ This phase does not include app packages yet, so Turbo will run with no targets 
 - These services run independently and can be called by the NestJS API later.
 - Pricing uses deterministic formulas; vision uses reference object scaling.
 - No paid models required yet; all logic is self-contained heuristics.
+
+## Phase 4 — Queue Wiring & Analysis Flow
+
+- From quote request → queued analysis → vision → pricing → result.
+- In NestJS, implement BullMQ worker "analyzeImages":
+  1) Validate images exist in S3
+  2) Call ai-vision:/analyze
+  3) Call ai-pricing:/price (with region rates)
+  4) Persist results to quotes (DRAFT)
+- Implement /tasks/:id polling with status {queued, processing, done, error}
+
+### Files
+
+- apps/api/src/queues/analyze-images.processor.ts
+- apps/api/src/queues/queues.module.ts
+- apps/api/src/modules/quote-requests/quote-requests.controller.ts
+- apps/api/src/modules/tasks/tasks.controller.ts
+
+### Commands (run from /treeproai)
+
+- Run API with queues:
+  - pnpm --filter @treeproai/api dev
+
+### DONE WHEN
+
+- Postman run: create quote-request → analyze → quote appears with range.
+
+### Notes
+
+- The queue processor currently uses mock AI results.
+- In a full implementation, it would call the actual AI services.
