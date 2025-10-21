@@ -24,10 +24,12 @@ import {
   Package2,
   PanelLeft,
   Search,
+  Settings,
   ShoppingCart,
   Users2,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
   return (
@@ -41,48 +43,86 @@ const Header = () => {
         </SheetTrigger>
         <SheetContent side="left" className="sm:max-w-xs">
           <nav className="grid gap-6 text-lg font-medium">
-            <Link
-              to="#"
+            <NavLink
+              to="/"
               className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
             >
               <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
               <span className="sr-only">TreeProAI</span>
-            </Link>
-            <Link
-              to="#"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+            </NavLink>
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                  isActive && "text-foreground"
+                )
+              }
             >
               <Home className="h-5 w-5" />
               Dashboard
-            </Link>
-            <Link
-              to="#"
-              className="flex items-center gap-4 px-2.5 text-foreground"
+            </NavLink>
+            <NavLink
+              to="/orders"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                  isActive && "text-foreground"
+                )
+              }
             >
               <ShoppingCart className="h-5 w-5" />
               Orders
-            </Link>
-            <Link
-              to="#"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+            </NavLink>
+            <NavLink
+              to="/products"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                  isActive && "text-foreground"
+                )
+              }
             >
               <Package className="h-5 w-5" />
               Products
-            </Link>
-            <Link
-              to="#"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+            </NavLink>
+            <NavLink
+              to="/customers"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                  isActive && "text-foreground"
+                )
+              }
             >
               <Users2 className="h-5 w-5" />
               Customers
-            </Link>
-            <Link
-              to="#"
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+            </NavLink>
+            <NavLink
+              to="/analytics"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                  isActive && "text-foreground"
+                )
+              }
             >
               <LineChart className="h-5 w-5" />
+              Analytics
+            </NavLink>
+            <NavLink
+              to="/settings"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                  isActive && "text-foreground"
+                )
+              }
+            >
+              <Settings className="h-5 w-5" />
               Settings
-            </Link>
+            </NavLink>
           </nav>
         </SheetContent>
       </Sheet>
@@ -90,18 +130,8 @@ const Header = () => {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link to="#">Dashboard</Link>
+              <NavLink to="/">Dashboard</NavLink>
             </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link to="#">Orders</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Recent Orders</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
