@@ -304,3 +304,40 @@ This phase does not include app packages yet, so Turbo will run with no targets 
 - This phase connects frontend auth to backend tenant scoping
 - Organization ID maps to company_id in the backend
 - All API calls are now tenant-aware
+
+## Phase 7 — Full Frontend Integration
+
+- Connect Next.js frontend to NestJS API with real data
+- Implement React Query for data fetching and caching
+- Build interactive UIs for leads, quotes, jobs, invoices, customers
+- Add forms for creating new resources
+- Implement quote builder with editable line items
+
+### Files
+
+- apps/web/app/(app)/page.tsx (dashboard with real data)
+- apps/web/app/(app)/leads/page.tsx
+- apps/web/app/(app)/quotes/page.tsx
+- apps/web/app/(app)/jobs/page.tsx
+- apps/web/hooks/useApiClient.ts (enhanced with error handling)
+
+### Commands (run from /treeproai)
+
+- Ensure API is running:
+  - pnpm --filter @treeproai/api dev
+- Run frontend:
+  - pnpm --filter @treeproai/web dev
+- Visit: http://localhost:3000
+
+### DONE WHEN
+
+- Dashboard shows real counts from API
+- Leads/Quotes/Jobs pages fetch and display real data
+- Forms can create new resources
+- Quote builder loads AI findings and allows edits
+
+### Notes
+
+- This phase completes the frontend-backend integration
+- All data is now fetched from the real API
+- Forms and mutations are implemented with proper validation
