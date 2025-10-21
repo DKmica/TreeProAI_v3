@@ -83,7 +83,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@dyad-sh/react-vite-component-tagger": "^0.1.0",
+    "@dyad-sh/react-vite-component-tagger": "^0.8.0",
     "@eslint/js": "latest",
     "@tailwindcss/typography": "latest",
     "@types/node": "latest",
