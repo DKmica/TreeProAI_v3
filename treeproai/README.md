@@ -99,3 +99,56 @@ This phase does not include app packages yet, so Turbo will run with no targets 
 - PII encryption uses env PII_ENCRYPTION_KEY (base64 of 32 bytes). The default in .env.example is for local only.
 - IDs are generated in the app/seed using UUIDs; DB defaults are not used to avoid extension requirements.
 - Attachments store S3 keys only; uploads are presigned and never proxied via API.
+
+## Phase 2 — Backend API (NestJS)
+
+- NestJS app with health endpoints, Clerk auth (with local dev fallback), tenant scoping via x-company-id, RBAC guards, and OpenAPI docs.
+- Core endpoints implemented: 
+  - GET /healthz, GET /readyz
+  - GET /docs (OpenAPI)
+  - GET /v1/me
+  - POST /v1/uploads/presign
+  - POST/GET /v1/customers
+  - POST/GET /v1/leads
+
+### Files
+
+- apps/api: package.json, tsconfig.json, eslint.config.mjs
+- src: main.ts, app.module.ts
+- src/config/env.ts
+- src/common: middleware/tenant.middleware.ts, guards/{auth.guard.ts, rbac.guard.ts}, decorators/roles.decorator.ts
+- src/modules: health, auth (/me), uploads (/uploads/presign), customers, leads
+- tests: env.test.ts, rbac.test.ts
+
+### Commands (run from /treeproai)
+
+- Install deps:
+  - pnpm i
+
+- Typecheck and test:
+  - pnpm -w typecheck
+  - pnpm -w test
+
+- Run API:
+  - pnpm --filter @treeproai/api dev
+  - Visit: 
+    - http://localhost:4000/healthz
+    - http://localhost:4000/docs
+
+- Example: presign upload (dev mode)
+  - Headers: x-company-id: DEMO-COMPANY, x-dev-user: dev1, x-role: OWNER
+  - POST http://localhost:4000/v1/uploads/presign
+  - Body: { "filename": "photo.jpg", "contentType": "image/jpeg" }
+
+### DONE WHEN
+
+- API starts and /healthz returns { ok: true }
+- /docs is available and shows the defined routes
+- /v1/me returns the provided x-dev-user and company ID in dev mode
+- /v1/uploads/presign returns a signed URL for PUT with your configured S3/MinIO
+- Creating/listing customers and leads work and are scoped by x-company-id
+
+### Notes
+
+- In local dev without Clerk keys, supply x-dev-user and x-role headers; with Clerk keys set, pass a real Bearer token and x-role for RBAC.
+- All create/list operations are tenant-scoped via the x-company-id header.
