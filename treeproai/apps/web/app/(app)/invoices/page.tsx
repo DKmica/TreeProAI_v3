@@ -1,6 +1,6 @@
 "use client";
 
-import { useApiClient } from "../../hooks/useApiClient";
+import { useApiClient } from "../../../hooks/useApiClient";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
