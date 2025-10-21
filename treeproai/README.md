@@ -270,3 +270,37 @@ This phase does not include app packages yet, so Turbo will run with no targets 
 - This phase adds the frontend without full integration to the API
 - The app shell and core pages are implemented but data is mocked
 - Actual API integration will come in later phases
+
+## Phase 6 — Auth & Tenancy
+
+- Clerk authentication in Next.js frontend
+- Organization/company selector with tenant-aware API calls
+- Authenticated app shell with user menu
+- Protected API routes with RBAC
+
+### Files
+
+- apps/web/middleware.ts (Clerk auth middleware)
+- apps/web/app/(app)/layout.tsx (authenticated app shell)
+- apps/web/components/app-sidebar.tsx (main navigation)
+- apps/web/hooks/useApiClient.ts (tenant-aware API client)
+
+### Commands (run from /treeproai)
+
+- Set Clerk keys in .env.local
+- Run frontend:
+  - pnpm --filter @treeproai/web dev
+- Visit: http://localhost:3000
+
+### DONE WHEN
+
+- Landing page shows "Sign In" button
+- After auth, app shell loads with org selector
+- API calls include x-company-id and Bearer token
+- Protected routes redirect to sign-in
+
+### Notes
+
+- This phase connects frontend auth to backend tenant scoping
+- Organization ID maps to company_id in the backend
+- All API calls are now tenant-aware
