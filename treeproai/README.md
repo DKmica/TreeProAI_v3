@@ -226,3 +226,47 @@ This phase does not include app packages yet, so Turbo will run with no targets 
 
 - The queue processor currently uses mock AI results.
 - In a full implementation, it would call the actual AI services.
+
+## Phase 5 — Frontend (Next.js)
+
+- Public landing + app shell + core pages.
+- app/(public)/page.tsx – "Instant AI Tree Estimate" with drag-drop upload and photo tips
+- app/(app)/leads, quotes, jobs, invoices, customers, settings
+- components from packages/ui; shadcn setup
+- hooks/useApiClient.ts (from packages/sdk-js)
+- auth (Clerk) + org/company selector
+- Quote Builder view showing AI findings, editable line items, confidence badge; actions: Send Quote, Accept → Create Job
+- Jobs: list + map cluster, schedule suggest modal
+- Invoices: status, "Send pay link"
+- Branding: Include logo; subtle pulse animation during Analyze.
+
+### Files
+
+- apps/web/app/(public)/page.tsx
+- apps/web/app/(app)/layout.tsx (app shell)
+- apps/web/app/(app)/page.tsx (dashboard)
+- apps/web/components/ui/* (shadcn components)
+- apps/web/lib/utils.ts
+- apps/web/hooks/useApiClient.ts
+
+### Commands (run from /treeproai)
+
+- Install deps:
+  - pnpm i
+
+- Run frontend:
+  - pnpm --filter @treeproai/web dev
+  - Visit: http://localhost:3000
+
+### DONE WHEN
+
+- "pnpm --filter web dev" launches; full flow clickable against local API.
+- Landing page shows upload CTA
+- Authenticated app shell loads
+- Core resource pages render (leads, quotes, jobs, etc.)
+
+### Notes
+
+- This phase adds the frontend without full integration to the API
+- The app shell and core pages are implemented but data is mocked
+- Actual API integration will come in later phases

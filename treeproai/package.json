@@ -20,7 +20,8 @@
     "db:generate": "pnpm --filter @treeproai/db run drizzle:generate",
     "db:migrate": "pnpm --filter @treeproai/db run drizzle:migrate",
     "db:seed": "pnpm --filter @treeproai/db run seed",
-    "api:dev": "pnpm --filter @treeproai/api dev"
+    "api:dev": "pnpm --filter @treeproai/api dev",
+    "web:dev": "pnpm --filter @treeproai/web dev"
   },
   "engines": {
     "node": ">=18.18.0"
