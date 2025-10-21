@@ -51,4 +51,51 @@ This is the TreeProAI monorepo scaffold. It sets up PNPM workspaces, Turborepo, 
 ### Notes
 
 This phase does not include app packages yet, so Turbo will run with no targets and exit successfully. Subsequent phases add apps, packages, and services incrementally.
-</treeproai/README.md>
+
+## Phase 1 — Database & Drizzle
+
+- Postgres + Drizzle ORM schema and migrations
+- Multi-tenant (company_id) on all tables, with indexes on company_id, status, created_at
+- PII (email, phone) encrypted at rest via AES-256-GCM; searchable via sha256 hash columns
+- Seed script creates a demo company, 4 users (OWNER/MANAGER/SALES/CREW), 10 customers, 20 leads, one crew and equipment
+
+### Files
+
+- packages/db: drizzle.config.ts, schema/*.ts (companies, users, customers, leads, addresses, quote_requests, quotes, quote_items, jobs, crews, equipment, invoices, payments, attachments, tenant_settings, webhooks)
+- packages/db/src: index.ts (client), crypto.ts (PII helpers)
+- packages/db/seeds/seed.ts
+- packages/db/tests/crypto.test.ts
+- .env.example (DATABASE_URL, PII_ENCRYPTION_KEY, etc.)
+
+### Commands (run from /treeproai)
+
+- Install workspace deps:
+  - pnpm i
+
+- Set local env (copy .env.example → .env and adjust as needed)
+
+- Generate migrations from schema:
+  - pnpm db:generate
+
+- Apply migrations:
+  - pnpm db:migrate
+
+- Seed demo data:
+  - pnpm db:seed
+
+- Verify lint/type/tests:
+  - pnpm -w lint
+  - pnpm -w typecheck
+  - pnpm -w test
+
+### DONE WHEN
+
+- Migrations run with tables present in Postgres
+- Seed script prints the demo company_id and inserts users/customers/leads
+- Lint, typecheck, and tests pass at the workspace root
+
+### Notes
+
+- PII encryption uses env PII_ENCRYPTION_KEY (base64 of 32 bytes). The default in .env.example is for local only.
+- IDs are generated in the app/seed using UUIDs; DB defaults are not used to avoid extension requirements.
+- Attachments store S3 keys only; uploads are presigned and never proxied via API.

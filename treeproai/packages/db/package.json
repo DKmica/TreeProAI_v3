@@ -1,0 +1,31 @@
+{
+  "name": "@treeproai/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "TreeProAI database package with Drizzle ORM, schema, migrations, and seeds",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "drizzle:generate": "drizzle-kit generate",
+    "drizzle:migrate": "drizzle-kit migrate",
+    "seed": "tsx seeds/seed.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.31.4",
+    "pg": "^8.12.0",
+    "zod": "^3.23.8",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.21.2",
+    "eslint": "^9.9.0",
+    "@eslint/js": "^9.9.0",
+    "typescript": "^5.5.4",
+    "tsx": "^4.19.2",
+    "vitest": "^1.6.0",
+    "@types/node": "^22.5.5"
+  }
+}
