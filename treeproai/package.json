@@ -1,0 +1,33 @@
+{
+  "name": "treeproai-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TreeProAI monorepo (Next.js, NestJS, Drizzle, FastAPI, BullMQ, etc.)",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*",
+    "infra/*",
+    "tools/*"
+  ],
+  "scripts": {
+    "prepare": "echo \"TreeProAI workspace prepared\"",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "eslint": "^9.9.0",
+    "prettier": "^3.3.3",
+    "turbo": "^2.0.5",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.0.1",
+    "@types/node": "^22.5.5"
+  }
+}
