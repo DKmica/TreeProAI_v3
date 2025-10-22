@@ -25,26 +25,35 @@ const getScoreVariant = (score: number) => {
   return "secondary";
 };
 
-const LeadCard = ({
-  lead,
-}: {
-  lead: { id: string; name: string; email: string; score: number };
-}) => {
+type Lead = {
+  id: string;
+  score: number;
+  customers: {
+    name: string;
+    email: string;
+  } | null;
+};
+
+const LeadCard = ({ lead }: { lead: Lead }) => {
+  const customer = Array.isArray(lead.customers) ? lead.customers[0] : lead.customers;
+  const customerName = customer?.name || "N/A";
+  const customerEmail = customer?.email || "No email";
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <Avatar>
             <AvatarFallback>
-              {lead.name
+              {customerName
                 .split(" ")
                 .map((n) => n[0])
                 .join("")}
             </AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle className="text-lg">{lead.name}</CardTitle>
-            <CardDescription>{lead.email}</CardDescription>
+            <CardTitle className="text-lg">{customerName}</CardTitle>
+            <CardDescription>{customerEmail}</CardDescription>
           </div>
         </div>
         <DropdownMenu>

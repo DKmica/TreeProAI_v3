@@ -12,7 +12,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { showSuccess, showError } from "@/utils/toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
@@ -21,7 +20,6 @@ const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email." }),
   phone: z.string().optional(),
-  notes: z.string().optional(),
 });
 
 type NewLeadFormProps = {
@@ -38,7 +36,6 @@ const NewLeadForm = ({ onSuccess }: NewLeadFormProps) => {
       name: "",
       email: "",
       phone: "",
-      notes: "",
     },
   });
 
@@ -49,23 +46,39 @@ const NewLeadForm = ({ onSuccess }: NewLeadFormProps) => {
     }
     setIsSubmitting(true);
 
-    // Generate a random lead score for demonstration
-    const score = Math.floor(Math.random() * 100) + 1;
+    try {
+      // Step 1: Create the customer
+      const { data: customerData, error: customerError } = await supabase
+        .from("customers")
+        .insert({
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          org_id: session.user.id, // Using user_id as org_id for now
+        })
+        .select()
+        .single();
 
-    const { error } = await supabase.from("leads").insert({
-      ...values,
-      user_id: session.user.id,
-      score,
-    });
+      if (customerError) throw customerError;
 
-    setIsSubmitting(false);
+      // Step 2: Create the lead, linking it to the new customer
+      const score = Math.floor(Math.random() * 100) + 1;
+      const { error: leadError } = await supabase.from("leads").insert({
+        customer_id: customerData.id,
+        source: "Manual Entry",
+        status: "new",
+        score: score,
+      });
 
-    if (error) {
-      showError(error.message);
-    } else {
+      if (leadError) throw leadError;
+
       showSuccess("New lead created successfully!");
-      onSuccess(); // This closes the dialog and triggers a refetch
+      onSuccess();
       form.reset();
+    } catch (error: any) {
+      showError(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -106,23 +119,6 @@ const NewLeadForm = ({ onSuccess }: NewLeadFormProps) => {
               <FormLabel>Phone (Optional)</FormLabel>
               <FormControl>
                 <Input placeholder="555-123-4567" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="notes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Notes (Optional)</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Initial notes about the lead..."
-                  className="resize-none"
-                  {...field}
-                />
               </FormControl>
               <FormMessage />
             </FormItem>

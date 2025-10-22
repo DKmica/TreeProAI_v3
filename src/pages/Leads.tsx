@@ -19,9 +19,11 @@ import { Card } from "@/components/ui/card";
 
 type Lead = {
   id: string;
-  name: string;
-  email: string;
   score: number;
+  customers: {
+    name: string;
+    email: string;
+  } | null;
 };
 
 const Leads = () => {
@@ -33,14 +35,14 @@ const Leads = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("leads")
-      .select("id, name, email, score")
+      .select("id, score, customers(name, email)")
       .order("created_at", { ascending: false });
 
     if (error) {
       showError(error.message);
       setLeads([]);
     } else {
-      setLeads(data);
+      setLeads(data as unknown as Lead[]);
     }
     setLoading(false);
   }, []);
