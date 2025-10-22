@@ -69,18 +69,18 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.0.2
         version: 1.2.3(@types/react@18.3.26)(react@18.3.1)
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@supabase/ssr':
-        specifier: ^0.3.0
-        version: 0.3.0(@supabase/supabase-js@2.76.1)
+        specifier: ^0.7.0
+        version: 0.7.0(@supabase/supabase-js@2.76.1)
       '@supabase/supabase-js':
         specifier: ^2.43.1
         version: 2.76.1
       '@treeproai/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@treeproai/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.1
@@ -1350,16 +1350,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@supabase/ssr@0.3.0(@supabase/supabase-js@2.76.1):
-    resolution: {integrity: sha512-lcVyQ7H6eumb2FB1Wa2N+jYWMfq6CFza3KapikT0fgttMQ+QvDgpNogx9jI8bZgKds+XFSMCojxFvFb+gwdbfA==}
-    peerDependencies:
-      '@supabase/supabase-js': ^2.33.1
-    dependencies:
-      '@supabase/supabase-js': 2.76.1
-      cookie: 0.5.0
-      ramda: 0.29.1
-    dev: false
-
   /@supabase/ssr@0.7.0(@supabase/supabase-js@2.76.1):
     resolution: {integrity: sha512-G65t5EhLSJ5c8hTCcXifSL9Q/ZRXvqgXeNo+d3P56f4U1IxwTqjB64UfmfixvmMcjuxnq2yGqEWVJqUcO+AzAg==}
     peerDependencies:
@@ -2105,11 +2095,6 @@ packages:
   /cookie-signature@1.2.2:
     resolution: {integrity: sha512-D76uU73ulSXrD1UXF4KE2TMxVVwhsnCgfAyTg9k8P6KGZjlXKrOLe4dJQKI3Bxi5wjesZoFXJWElNWBjPZMbhg==}
     engines: {node: '>=6.6.0'}
-    dev: false
-
-  /cookie@0.5.0:
-    resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
-    engines: {node: '>= 0.6'}
     dev: false
 
   /cookie@0.7.2:
@@ -4480,10 +4465,6 @@ packages:
 
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
-
-  /ramda@0.29.1:
-    resolution: {integrity: sha512-OfxIeWzd4xdUNxlWhgFazxsA/nl3mS4/jGZI5n00uWOoSSFRhC1b6gl6xvmzUamgmqELraWp0J/qqVlXYPDPyA==}
-    dev: false
 
   /range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
