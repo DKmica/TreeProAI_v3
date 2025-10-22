@@ -1,4 +1,4 @@
-[00:00:01.700] Server  ERROR    ⨯ ./apps/web/src/middleware.ts:1:1
+[00:00:01.606] Server  ERROR    ⨯ ./apps/web/src/middleware.ts:1:1
 Module not found: Can't resolve '@supabase/ssr'
 > 1 | import { createServerClient, type CookieOptions } from '@supabase/ssr'
     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -11,7 +11,7 @@ Module not found: Can't resolve '@supabase/ssr'
 https://nextjs.org/docs/messages/module-not-found
 
 
-[00:00:01.703] Server  ERROR    ⨯ ./apps/web/src/middleware.ts:1:1
+[00:00:01.608] Server  ERROR    ⨯ ./apps/web/src/middleware.ts:1:1
 Module not found: Can't resolve '@supabase/ssr'
 > 1 | import { createServerClient, type CookieOptions } from '@supabase/ssr'
     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -24,14 +24,14 @@ Module not found: Can't resolve '@supabase/ssr'
 https://nextjs.org/docs/messages/module-not-found
 
 
-[00:00:01.770] Server  LOG     It looks like you're trying to use TypeScript but do not have the required package(s) installed.
+[00:00:01.660] Server  LOG     It looks like you're trying to use TypeScript but do not have the required package(s) installed.
 Installing dependencies
 
 If you are not trying to use TypeScript, please remove the tsconfig.json file from your package root (and any TypeScript files in your app and pages directories).
 
-[00:00:02.030] Server  LOG     
-[00:00:02.031] Server  LOG     Installing devDependencies (pnpm):
-[00:00:02.031] Server  LOG     - typescript
-[00:00:02.032] Server  LOG     - @types/react
-[00:00:02.032] Server  LOG     - @types/node
-[00:00:02.032] Server  LOG     
+[00:00:01.677] Server  LOG     
+[00:00:01.678] Server  LOG     Installing devDependencies (pnpm):
+[00:00:01.678] Server  LOG     - typescript
+[00:00:01.678] Server  LOG     - @types/react
+[00:00:01.679] Server  LOG     - @types/node
+[00:00:01.679] Server  LOG     
