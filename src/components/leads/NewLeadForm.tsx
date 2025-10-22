@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -12,7 +13,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { showSuccess } from "@/utils/toast";
+import { showSuccess, showError } from "@/utils/toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -26,6 +29,9 @@ type NewLeadFormProps = {
 };
 
 const NewLeadForm = ({ onSuccess }: NewLeadFormProps) => {
+  const { session } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,12 +42,31 @@ const NewLeadForm = ({ onSuccess }: NewLeadFormProps) => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // In a real app, you'd send this to your backend.
-    // For now, we'll log it and show a success message.
-    console.log("New Lead Submitted:", values);
-    showSuccess("New lead created successfully!");
-    onSuccess(); // This closes the dialog
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!session?.user) {
+      showError("You must be logged in to create a lead.");
+      return;
+    }
+    setIsSubmitting(true);
+
+    // Generate a random lead score for demonstration
+    const score = Math.floor(Math.random() * 100) + 1;
+
+    const { error } = await supabase.from("leads").insert({
+      ...values,
+      user_id: session.user.id,
+      score,
+    });
+
+    setIsSubmitting(false);
+
+    if (error) {
+      showError(error.message);
+    } else {
+      showSuccess("New lead created successfully!");
+      onSuccess(); // This closes the dialog and triggers a refetch
+      form.reset();
+    }
   };
 
   return (
@@ -103,8 +128,8 @@ const NewLeadForm = ({ onSuccess }: NewLeadFormProps) => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          Create Lead
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Creating..." : "Create Lead"}
         </Button>
       </form>
     </Form>

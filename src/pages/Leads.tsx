@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Layout from "@/components/layout/Layout";
 import LeadCard from "@/components/leads/LeadCard";
 import { Button } from "@/components/ui/button";
@@ -12,48 +12,47 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import NewLeadForm from "@/components/leads/NewLeadForm";
+import { supabase } from "@/integrations/supabase/client";
+import { showError } from "@/utils/toast";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
 
-const mockLeads = [
-  {
-    id: "lead_1",
-    name: "John Doe",
-    email: "john.doe@example.com",
-    score: 85,
-  },
-  {
-    id: "lead_2",
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    score: 60,
-  },
-  {
-    id: "lead_3",
-    name: "Sam Wilson",
-    email: "sam.wilson@example.com",
-    score: 30,
-  },
-  {
-    id: "lead_4",
-    name: "Alice Johnson",
-    email: "alice.j@example.com",
-    score: 95,
-  },
-  {
-    id: "lead_5",
-    name: "Bob Brown",
-    email: "bob.b@example.com",
-    score: 45,
-  },
-  {
-    id: "lead_6",
-    name: "Charlie Davis",
-    email: "charlie.d@example.com",
-    score: 70,
-  },
-];
+type Lead = {
+  id: string;
+  name: string;
+  email: string;
+  score: number;
+};
 
 const Leads = () => {
   const [isNewLeadDialogOpen, setIsNewLeadDialogOpen] = useState(false);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchLeads = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("leads")
+      .select("id, name, email, score")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      showError(error.message);
+      setLeads([]);
+    } else {
+      setLeads(data);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchLeads();
+  }, [fetchLeads]);
+
+  const handleSuccess = () => {
+    setIsNewLeadDialogOpen(false);
+    fetchLeads();
+  };
 
   return (
     <Layout>
@@ -78,17 +77,48 @@ const Leads = () => {
                 Fill in the details below to add a new lead.
               </DialogDescription>
             </DialogHeader>
-            <NewLeadForm onSuccess={() => setIsNewLeadDialogOpen(false)} />
+            <NewLeadForm onSuccess={handleSuccess} />
           </DialogContent>
         </Dialog>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {mockLeads.map((lead) => (
-          <LeadCard key={lead.id} lead={lead} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </div>
+      ) : leads.length > 0 ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {leads.map((lead) => (
+            <LeadCard key={lead.id} lead={lead} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-16 border-2 border-dashed rounded-lg">
+          <h3 className="text-xl font-semibold">No leads yet</h3>
+          <p className="text-muted-foreground mt-2">
+            Click "New Lead" to get started.
+          </p>
+        </div>
+      )}
     </Layout>
   );
 };
+
+const CardSkeleton = () => (
+  <Card>
+    <div className="p-6 space-y-4">
+      <div className="flex items-center gap-4">
+        <Skeleton className="h-12 w-12 rounded-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-[150px]" />
+          <Skeleton className="h-4 w-[200px]" />
+        </div>
+      </div>
+      <Skeleton className="h-8 w-full" />
+      <Skeleton className="h-10 w-full" />
+    </div>
+  </Card>
+);
 
 export default Leads;
