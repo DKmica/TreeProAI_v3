@@ -1,4 +1,5 @@
-import { Module, MiddlewareConsumer } from "@nestjs/common";
+import { Module, MiddlewareConsumer, NestModule } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { HealthModule } from "./modules/health/health.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { UploadsModule } from "./modules/uploads/uploads.module";
@@ -8,23 +9,25 @@ import { QuoteRequestsModule } from "./modules/quote-requests/quote-requests.mod
 import { TasksModule } from "./modules/tasks/tasks.module";
 import { QueuesModule } from "./queues/queues.module";
 import { TenantMiddleware } from "./common/middleware/tenant.middleware";
-import { EnvService } from "./config/env";
 
 @Module({
   imports: [
-    HealthModule, 
-    AuthModule, 
-    UploadsModule, 
-    CustomersModule, 
+    ConfigModule.forRoot({ isGlobal: true }),
+    HealthModule,
+    AuthModule,
+    UploadsModule,
+    CustomersModule,
     LeadsModule,
     QuoteRequestsModule,
     TasksModule,
-    QueuesModule
+    QueuesModule,
   ],
-  providers: [EnvService]
 })
-export class AppModule {
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(TenantMiddleware).forRoutes("*");
+    consumer
+      .apply(TenantMiddleware)
+      .exclude("healthz", "readyz", "v1/webhooks/clerk")
+      .forRoutes("*");
   }
 }

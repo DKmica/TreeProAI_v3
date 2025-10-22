@@ -1,14 +1,20 @@
 import { Controller, Get, Req, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "../../common/guards/auth.guard";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { getAuth } from "@clerk/clerk-sdk-node";
+import { RolesGuard } from "@/common/guards/roles.guard";
 
-@Controller("me")
-@UseGuards(AuthGuard)
+@ApiTags("Auth")
+@ApiBearerAuth()
+@Controller({ path: "me", version: "1" })
+@UseGuards(RolesGuard)
 export class MeController {
   @Get()
   getMe(@Req() req: any) {
+    const auth = getAuth(req);
     return {
-      user: req.user,
-      companyId: req.companyId
+      userId: auth.userId,
+      companyId: req.companyId,
+      role: req.userRole,
     };
   }
 }

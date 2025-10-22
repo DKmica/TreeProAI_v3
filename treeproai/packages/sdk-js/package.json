@@ -1,0 +1,16 @@
+{
+  "name": "@treeproai/sdk-js",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "generate": "openapi-typescript ../../apps/api/dist/swagger.json -o src/index.ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^6.7.6",
+    "typescript": "^5.4.5"
+  }
+}

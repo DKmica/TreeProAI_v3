@@ -29,3 +29,4 @@ export async function disconnectDb() {
 }
 
 export { schema };
+export * from "drizzle-orm";

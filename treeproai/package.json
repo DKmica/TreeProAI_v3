@@ -1,5 +1,5 @@
 {
-  "name": "treeproai",
+  "name": "treeproai-monorepo",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -7,17 +7,19 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
-    "format": "prettier --write \"**/*.{ts,tsx,md,json}\""
+    "test:e2e": "pnpm --filter web test:e2e",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "db:generate": "pnpm --filter @treeproai/db db:generate",
+    "db:migrate": "pnpm --filter @treeproai/db db:migrate",
+    "db:seed": "pnpm --filter @treeproai/db db:seed"
   },
   "devDependencies": {
-    "@typescript-eslint/parser": "^7.8.0",
+    "@typescript-eslint/parser": "^7.13.0",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.3",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "prettier": "^3.2.5",
-    "turbo": "^2.0.1",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^7.8.0"
+    "eslint-config-next": "^14.2.4",
+    "prettier": "^3.3.2",
+    "turbo": "^2.0.4",
+    "typescript": "^5.4.5"
   },
-  "packageManager": "pnpm@8.15.6"
+  "packageManager": "pnpm@9.1.4"
 }

@@ -1,10 +1,5 @@
 import { createCipheriv, createDecipheriv, randomBytes, createHash } from "node:crypto";
 
-/**
- * PII encryption using AES-256-GCM.
- * Key is provided via env PII_ENCRYPTION_KEY as base64 of 32 bytes.
- */
-
 function getKey(): Buffer {
   const b64 = process.env.PII_ENCRYPTION_KEY;
   if (!b64) {
@@ -22,12 +17,9 @@ export function hashPII(value: string): string {
   return createHash("sha256").update(normalized).digest("hex");
 }
 
-/**
- * Returns a compact ciphertext string "ivHex:tagHex:cipherHex"
- */
 export function encryptPII(plain: string): string {
   const key = getKey();
-  const iv = randomBytes(12); // GCM standard nonce length
+  const iv = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", key, iv);
   const ciphertext = Buffer.concat([cipher.update(plain, "utf8"), cipher.final()]);
   const tag = cipher.getAuthTag();
@@ -35,18 +27,23 @@ export function encryptPII(plain: string): string {
 }
 
 export function decryptPII(compact: string): string {
-  const [ivHex, tagHex, cipherHex] = compact.split(":");
-  if (!ivHex || !tagHex || !cipherHex) {
-    throw new Error("Invalid ciphertext format");
+  try {
+    const [ivHex, tagHex, cipherHex] = compact.split(":");
+    if (!ivHex || !tagHex || !cipherHex) {
+      throw new Error("Invalid ciphertext format");
+    }
+    const key = getKey();
+    const iv = Buffer.from(ivHex, "hex");
+    const tag = Buffer.from(tagHex, "hex");
+    const ciphertext = Buffer.from(cipherHex, "hex");
+    const decipher = createDecipheriv("aes-256-gcm", key, iv);
+    decipher.setAuthTag(tag);
+    const plain = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+    return plain.toString("utf8");
+  } catch (error) {
+    console.error("Failed to decrypt PII", error);
+    return "DECRYPTION_ERROR";
   }
-  const key = getKey();
-  const iv = Buffer.from(ivHex, "hex");
-  const tag = Buffer.from(tagHex, "hex");
-  const ciphertext = Buffer.from(cipherHex, "hex");
-  const decipher = createDecipheriv("aes-256-gcm", key, iv);
-  decipher.setAuthTag(tag);
-  const plain = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
-  return plain.toString("utf8");
 }
 
 export function packEncrypted(value: string) {

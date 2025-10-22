@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { BullModule } from "@nestjs/bullmq";
-import { AnalyzeImagesProcessor } from "./analyze-images.processor";
 import { HttpModule } from "@nestjs/axios";
+import { AnalysisProcessor } from "./analysis.processor";
 
 @Module({
   imports: [
@@ -9,13 +9,13 @@ import { HttpModule } from "@nestjs/axios";
     BullModule.forRoot({
       connection: {
         host: process.env.REDIS_URL ? new URL(process.env.REDIS_URL).hostname : "localhost",
-        port: process.env.REDIS_URL ? parseInt(new URL(process.env.REDIS_URL).port) : 6379
-      }
+        port: process.env.REDIS_URL ? parseInt(new URL(process.env.REDIS_URL).port, 10) : 6379,
+      },
     }),
     BullModule.registerQueue({
-      name: "analyzeImages"
-    })
+      name: "analysis",
+    }),
   ],
-  providers: [AnalyzeImagesProcessor]
+  providers: [AnalysisProcessor],
 })
 export class QueuesModule {}

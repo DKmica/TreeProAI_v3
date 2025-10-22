@@ -7,11 +7,11 @@
     "types": ["node"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "moduleResolution": "node",
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@treeproai/db": ["../../packages/db/src/index.ts"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "tests"]
+  "include": ["src"]
 }

@@ -1,42 +1,35 @@
-# infra/docker/web.Dockerfile
-# This Dockerfile builds and runs the Next.js web application.
-# To build: docker build -t treeproai-web -f infra/docker/web.Dockerfile .
-
-FROM node:18-alpine AS base
-WORKDIR /app
+# Base image for installing dependencies
+FROM node:20-alpine AS deps
+WORKDIR /usr/src/app
+COPY pnpm-lock.yaml ./
+COPY package.json ./
+COPY pnpm-workspace.yaml ./
+COPY apps/web/package.json ./apps/web/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/sdk-js/package.json ./packages/sdk-js/
+COPY packages/config/package.json ./packages/config/
 RUN npm i -g pnpm
+RUN pnpm fetch
 
-# 1. Prune workspace to only include dependencies for the web app
-FROM base AS pruner
+# Builder image
+FROM node:20-alpine AS builder
+WORKDIR /usr/src/app
+COPY --from=deps /usr/src/app/node_modules ./node_modules
 COPY . .
-# This command creates a pruned, production-ready workspace in /prod/web
-RUN pnpm --filter @treeproai/web... deploy --prod /prod/web
+RUN npm i -g pnpm
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @treeproai/web build
 
-# 2. Build the web application using the pruned workspace
-FROM base AS builder
-WORKDIR /app
-COPY --from=pruner /prod/web .
-RUN pnpm install --prod
-RUN pnpm build
+# Production image
+FROM node:20-alpine AS runner
+WORKDIR /usr/src/app
+ENV NODE_ENV production
 
-# 3. Create the final, lightweight production image
-FROM node:18-alpine AS runner
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-# Create a non-root user for better security
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# Copy necessary build artifacts from the builder stage
-COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/package.json .
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/apps/web/public ./apps/web/public
+COPY --from=builder --chown=nextjs:nodejs /usr/src/app/apps/web/.next ./.next
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/apps/web/package.json ./package.json
 
 USER nextjs
-
 EXPOSE 3000
-
-CMD ["pnpm", "start"]
+CMD ["pnpm", "--filter", "@treeproai/web", "start"]

@@ -1,10 +1,9 @@
-import { Controller, Post, Get, Body, Req, UseGuards } from "@nestjs/common";
+import { Controller, Post, Get, Body, Req, UseGuards, Param } from "@nestjs/common";
 import { z } from "zod";
-import { AuthGuard } from "../../common/guards/auth.guard";
-import { RbacGuard } from "../../common/guards/rbac.guard";
-import { Roles } from "../../common/decorators/roles.decorator";
-import { getDb, schema, packEncrypted } from "@treeproai/db";
-import { randomUUID } from "node:crypto";
+import { getDb, schema, packEncrypted, eq, decryptPII } from "@/db/index";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { RolesGuard } from "@/common/guards/roles.guard";
+import { Roles } from "@/common/decorators/roles.decorator";
 
 const CreateCustomerSchema = z.object({
   name: z.string().min(1),
@@ -12,60 +11,69 @@ const CreateCustomerSchema = z.object({
   phone: z.string().min(7).max(32).optional()
 });
 
-@Controller("customers")
-@UseGuards(AuthGuard, RbacGuard)
+@ApiTags("Customers")
+@ApiBearerAuth()
+@Controller({ path: "customers", version: "1" })
+@UseGuards(RolesGuard)
 export class CustomersController {
   @Post()
-  @Roles("OWNER", "MANAGER", "SALES")
+  @Roles("owner", "admin", "member")
   async create(@Body() body: unknown, @Req() req: any) {
     const input = CreateCustomerSchema.parse(body);
     const db = getDb();
-    const id = randomUUID();
-    let emailCiphertext: string | undefined;
-    let emailHash: string | undefined;
-    let phoneCiphertext: string | undefined;
-    let phoneHash: string | undefined;
+    
+    const values: Partial<typeof schema.customers.$inferInsert> = {
+        companyId: req.companyId,
+        name: input.name,
+    };
 
     if (input.email) {
-      const p = packEncrypted(input.email);
-      emailCiphertext = p.ciphertext;
-      emailHash = p.hash;
+      const { ciphertext, hash } = packEncrypted(input.email);
+      values.emailCiphertext = ciphertext;
+      values.emailHash = hash;
     }
     if (input.phone) {
-      const p = packEncrypted(input.phone);
-      phoneCiphertext = p.ciphertext;
-      phoneHash = p.hash;
+        const { ciphertext, hash } = packEncrypted(input.phone);
+        values.phoneCiphertext = ciphertext;
+        values.phoneHash = hash;
     }
 
-    await db.insert(schema.customers).values({
-      id,
-      companyId: req.companyId,
-      name: input.name,
-      emailCiphertext,
-      emailHash,
-      phoneCiphertext,
-      phoneHash,
-      status: "ACTIVE"
-    });
-
-    return { id };
+    const [customer] = await db.insert(schema.customers).values(values).returning();
+    return { id: customer.id };
   }
 
   @Get()
-  @Roles("OWNER", "MANAGER", "SALES", "CREW")
+  @Roles("owner", "admin", "member")
   async list(@Req() req: any) {
     const db = getDb();
     const rows = await db
       .select({
         id: schema.customers.id,
         name: schema.customers.name,
-        status: schema.customers.status,
         createdAt: schema.customers.createdAt
       })
       .from(schema.customers)
-      .where(schema.customers.companyId.eq(req.companyId))
+      .where(eq(schema.customers.companyId, req.companyId))
       .orderBy(schema.customers.createdAt.desc());
 
     return { data: rows };
+  }
+
+  @Get(':id')
+  @Roles('owner', 'admin', 'member')
+  async getById(@Param('id') id: string, @Req() req: any) {
+    const db = getDb();
+    const [customer] = await db
+      .select()
+      .from(schema.customers)
+      .where(eq(schema.customers.id, id) && eq(schema.customers.companyId, req.companyId));
+
+    if (!customer) return null;
+
+    return {
+      ...customer,
+      email: customer.emailCiphertext ? decryptPII(customer.emailCiphertext) : null,
+      phone: customer.phoneCiphertext ? decryptPII(customer.phoneCiphertext) : null,
+    };
   }
 }

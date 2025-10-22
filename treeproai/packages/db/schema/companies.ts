@@ -1,14 +1,14 @@
-import { pgTable, uuid, varchar, timestamp, jsonb, index } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, index, pgEnum } from "drizzle-orm/pg-core";
 import { randomUUID } from "node:crypto";
+
+export const companyPlan = pgEnum("company_plan", ["FREE", "PRO", "ENTERPRISE"]);
 
 export const companies = pgTable("companies", {
   id: uuid("id").primaryKey().$defaultFn(() => randomUUID()),
   name: varchar("name", { length: 256 }).notNull(),
-  slug: varchar("slug", { length: 128 }).notNull().unique(),
+  plan: companyPlan("plan").default("FREE").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-  settings: jsonb("settings").$type<Record<string, unknown>>().default({}).notNull()
 }, (t) => ({
-  slugIdx: index("idx_companies_slug").on(t.slug),
   createdIdx: index("idx_companies_created_at").on(t.createdAt)
 }));
