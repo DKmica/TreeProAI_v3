@@ -15,14 +15,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { db } from "@repo/db";
+import { customers as customersSchema } from "@repo/db/schema";
+import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function CustomersPage() {
-  // In the future, we will fetch real customer data here.
-  const customers = [
-    { id: 1, name: "Liam Johnson", email: "liam@example.com", type: "Residential" },
-    { id: 2, name: "Olivia Smith", email: "olivia@example.com", type: "Commercial" },
-    { id: 3, name: "Noah Williams", email: "noah@example.com", type: "Residential" },
-  ];
+export default async function CustomersPage() {
+  const cookieStore = cookies();
+  const activeOrgId = cookieStore.get("active-org-id")?.value;
+
+  if (!activeOrgId) {
+    // This should be handled by the layout, but as a safeguard:
+    redirect("/dashboard");
+  }
+
+  const customers = await db
+    .select()
+    .from(customersSchema)
+    .where(eq(customersSchema.orgId, activeOrgId));
 
   return (
     <Card>
@@ -47,24 +58,32 @@ export default function CustomersPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {customers.map((customer) => (
-              <TableRow key={customer.id}>
-                <TableCell className="font-medium">{customer.name}</TableCell>
-                <TableCell>{customer.type}</TableCell>
-                <TableCell>{customer.email}</TableCell>
-                <TableCell>
-                  {/* Actions dropdown will go here */}
+            {customers.length > 0 ? (
+              customers.map((customer) => (
+                <TableRow key={customer.id}>
+                  <TableCell className="font-medium">{customer.name}</TableCell>
+                  <TableCell>{customer.email || "-"}</TableCell>
+                  <TableCell>{customer.phone || "-"}</TableCell>
+                  <TableCell>
+                    {/* Actions dropdown will go here */}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4} className="h-24 text-center">
+                  No customers found. Get started by adding a new customer.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </CardContent>
