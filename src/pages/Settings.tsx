@@ -22,8 +22,11 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
+import { useTheme } from "next-themes";
 
 const Settings = () => {
+  const { theme, setTheme } = useTheme();
+
   return (
     <Layout>
       <div className="flex flex-col gap-4">
@@ -82,7 +85,11 @@ const Settings = () => {
                 </CardHeader>
                 <CardContent>
                   <Label>Theme</Label>
-                  <RadioGroup defaultValue="light" className="mt-2">
+                  <RadioGroup
+                    value={theme}
+                    onValueChange={setTheme}
+                    className="mt-2"
+                  >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="light" id="light" />
                       <Label htmlFor="light">Light</Label>

@@ -10,25 +10,28 @@ import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "@/components/theme-provider";
 
 function App() {
   return (
-    <TooltipProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/leads" element={<Leads />} />
-          <Route path="/quotes" element={<Quotes />} />
-          <Route path="/jobs" element={<Jobs />} />
-          <Route path="/invoices" element={<Invoices />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/customers/:id" element={<Customer />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
-    </TooltipProvider>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <TooltipProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/leads" element={<Leads />} />
+            <Route path="/quotes" element={<Quotes />} />
+            <Route path="/jobs" element={<Jobs />} />
+            <Route path="/invoices" element={<Invoices />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/customers/:id" element={<Customer />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
+      </TooltipProvider>
+    </ThemeProvider>
   );
 }
 
