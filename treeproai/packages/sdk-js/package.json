@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "generate": "openapi-typescript ../../apps/api/dist/swagger.json -o src/index.ts"
+    "generate": "openapi-typescript http://localhost:4000/docs-json -o src/index.ts"
   },
   "devDependencies": {
     "openapi-typescript": "^6.7.6",

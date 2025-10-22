@@ -131,3 +131,14 @@ Run Playwright end-to-end tests (requires the app to be running):
 
 ```bash
 pnpm test:e2e
+```
+
+### Generating the API Client (SDK)
+
+The `@treeproai/sdk-js` package contains a typed client for the backend API. To regenerate it after making API changes:
+
+1.  Ensure the API server is running (`pnpm --filter @treeproai/api dev`).
+2.  Run the generation script:
+
+```bash
+pnpm --filter @treeproai/sdk-js generate
