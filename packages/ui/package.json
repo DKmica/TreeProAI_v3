@@ -6,9 +6,10 @@
     "./button": "./src/button.tsx"
   },
   "scripts": {
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint \"src/**/*.{ts,tsx,js,jsx}\" --max-warnings 0"
   },
   "devDependencies": {
+    "eslint": "^8",
     "react": "^18.2.0"
   }
 }
