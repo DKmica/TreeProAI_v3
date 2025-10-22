@@ -137,6 +137,20 @@ services:
           path: ./services/ai-pricing
           target: /app
 
+  ai-tabular:
+    build:
+      context: ../..
+      dockerfile: infra/docker/ai-tabular.Dockerfile
+    container_name: treeproai-ai-tabular
+    restart: unless-stopped
+    ports:
+      - "8002:8002"
+    develop:
+      watch:
+        - action: sync
+          path: ./services/ai-tabular
+          target: /app
+
   web:
     build:
       context: ../..

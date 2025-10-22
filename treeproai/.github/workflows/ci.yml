@@ -55,7 +55,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name' Build and push 'ai-vision' image
+      - name: Build and push 'ai-vision' image
         uses: docker/build-push-action@v5
         with:
           context: ./treeproai
@@ -72,5 +72,15 @@ jobs:
           file: ./treeproai/infra/docker/ai-pricing.Dockerfile
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/ai-pricing:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push 'ai-tabular' image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./treeproai
+          file: ./treeproai/infra/docker/ai-tabular.Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/ai-tabular:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
