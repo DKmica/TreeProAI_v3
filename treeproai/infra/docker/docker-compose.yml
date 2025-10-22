@@ -179,6 +179,34 @@ services:
           path: ./services/routing
           target: /app
 
+  ocr:
+    build:
+      context: ../..
+      dockerfile: infra/docker/ocr.Dockerfile
+    container_name: treeproai-ocr
+    restart: unless-stopped
+    ports:
+      - "8005:8005"
+    develop:
+      watch:
+        - action: sync
+          path: ./services/ocr
+          target: /app
+
+  speech:
+    build:
+      context: ../..
+      dockerfile: infra/docker/speech.Dockerfile
+    container_name: treeproai-speech
+    restart: unless-stopped
+    ports:
+      - "8006:8006"
+    develop:
+      watch:
+        - action: sync
+          path: ./services/speech
+          target: /app
+
   web:
     build:
       context: ../..

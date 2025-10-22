@@ -104,3 +104,23 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/routing:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Build and push 'ocr' image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./treeproai
+          file: ./treeproai/infra/docker/ocr.Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/ocr:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push 'speech' image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./treeproai
+          file: ./treeproai/infra/docker/speech.Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/speech:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
