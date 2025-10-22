@@ -1,0 +1,9 @@
+{
+  "name": "@treeproai/config-tailwind",
+  "version": "0.1.0",
+  "private": true,
+  "main": "tailwind.config.ts",
+  "devDependencies": {
+    "tailwindcss-animate": "^1.0.7"
+  }
+}
