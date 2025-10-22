@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getActiveOrg } from "@/lib/get-active-org";
 import { db, schema } from "@treeproai/db";
-import { and, eq, desc } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import {
   Table,
@@ -10,9 +10,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@repo/ui/table";
-import { Badge } from "@repo/ui/badge";
-import { Button } from "@repo/ui/button";
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { JobActions } from "./job-actions";
 
 type Job = typeof schema.jobs.$inferSelect & {

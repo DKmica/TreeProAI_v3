@@ -1,7 +1,6 @@
 "use server";
 
 import { db, schema } from "@treeproai/db";
-import { leads } from "@repo/db/schema";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";

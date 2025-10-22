@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { TrainingPanel } from './training-panel'
 
 export default async function DashboardPage() {
   const supabase = createClient()
@@ -50,37 +51,40 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="mt-8 border rounded-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-        <ul className="space-y-2">
-          <li className="flex items-center">
-            <div className="bg-blue-100 rounded-full p-2 mr-3">
-              <span className="text-blue-800 font-bold">1</span>
-            </div>
-            <div>
-              <p className="font-medium">New lead received</p>
-              <p className="text-sm text-muted-foreground">John Smith - john@example.com</p>
-            </div>
-          </li>
-          <li className="flex items-center">
-            <div className="bg-green-100 rounded-full p-2 mr-3">
-              <span className="text-green-800 font-bold">2</span>
-            </div>
-            <div>
-              <p className="font-medium">Quote approved</p>
-              <p className="text-sm text-muted-foreground">Quote #Q-2023-001 for $1,250</p>
-            </div>
-          </li>
-          <li className="flex items-center">
-            <div className="bg-yellow-100 rounded-full p-2 mr-3">
-              <span className="text-yellow-800 font-bold">3</span>
-            </div>
-            <div>
-              <p className="font-medium">Job scheduled</p>
-              <p className="text-sm text-muted-foreground">Tree trimming for 123 Oak St</p>
-            </div>
-          </li>
-        </ul>
+      <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        <div className="border rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+          <ul className="space-y-2">
+            <li className="flex items-center">
+              <div className="bg-blue-100 rounded-full p-2 mr-3">
+                <span className="text-blue-800 font-bold">1</span>
+              </div>
+              <div>
+                <p className="font-medium">New lead received</p>
+                <p className="text-sm text-muted-foreground">John Smith - john@example.com</p>
+              </div>
+            </li>
+            <li className="flex items-center">
+              <div className="bg-green-100 rounded-full p-2 mr-3">
+                <span className="text-green-800 font-bold">2</span>
+              </div>
+              <div>
+                <p className="font-medium">Quote approved</p>
+                <p className="text-sm text-muted-foreground">Quote #Q-2023-001 for $1,250</p>
+              </div>
+            </li>
+            <li className="flex items-center">
+              <div className="bg-yellow-100 rounded-full p-2 mr-3">
+                <span className="text-yellow-800 font-bold">3</span>
+              </div>
+              <div>
+                <p className="font-medium">Job scheduled</p>
+                <p className="text-sm text-muted-foreground">Tree trimming for 123 Oak St</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <TrainingPanel />
       </div>
     </div>
   )

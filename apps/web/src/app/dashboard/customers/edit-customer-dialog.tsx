@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { EditCustomerForm } from "./edit-customer-form";
-import type { customers } from "@repo/db/schema";
+import type { customers } from "@treeproai/db/schema";
 
 type Customer = typeof customers.$inferSelect;
 
