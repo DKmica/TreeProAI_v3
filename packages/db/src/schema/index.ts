@@ -3,3 +3,4 @@ export * from "./orgs";
 export * from "./kb";
 export * from "./crm";
 export * from "./financials";
+export * from "./operations";

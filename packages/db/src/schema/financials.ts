@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import { jsonb, numeric, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { orgs } from "./orgs";
 import { customers } from "./crm";
+import { jobs } from "./operations";
 
 export const quotes = pgTable("quotes", {
   id: uuid("id").defaultRandom().primaryKey(),
