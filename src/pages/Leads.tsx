@@ -1,7 +1,17 @@
+import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import LeadCard from "@/components/leads/LeadCard";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import NewLeadForm from "@/components/leads/NewLeadForm";
 
 const mockLeads = [
   {
@@ -43,6 +53,8 @@ const mockLeads = [
 ];
 
 const Leads = () => {
+  const [isNewLeadDialogOpen, setIsNewLeadDialogOpen] = useState(false);
+
   return (
     <Layout>
       <div className="flex items-center justify-between mb-6">
@@ -52,10 +64,23 @@ const Leads = () => {
             Manage your potential customers and new opportunities.
           </p>
         </div>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          New Lead
-        </Button>
+        <Dialog open={isNewLeadDialogOpen} onOpenChange={setIsNewLeadDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              New Lead
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create New Lead</DialogTitle>
+              <DialogDescription>
+                Fill in the details below to add a new lead.
+              </DialogDescription>
+            </DialogHeader>
+            <NewLeadForm onSuccess={() => setIsNewLeadDialogOpen(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {mockLeads.map((lead) => (
