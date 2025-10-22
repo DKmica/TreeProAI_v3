@@ -5,6 +5,7 @@ import Quotes from "./pages/Quotes";
 import Jobs from "./pages/Jobs";
 import Invoices from "./pages/Invoices";
 import Customers from "./pages/Customers";
+import Customer from "./pages/Customer";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -21,6 +22,7 @@ function App() {
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/invoices" element={<Invoices />} />
           <Route path="/customers" element={<Customers />} />
+          <Route path="/customers/:id" element={<Customer />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
