@@ -21,6 +21,7 @@ import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { AddCustomerDialog } from "./add-customer-dialog";
+import { CustomerActions } from "./customer-actions";
 
 export default async function CustomersPage() {
   const cookieStore = cookies();
@@ -69,7 +70,9 @@ export default async function CustomersPage() {
                   <TableCell>{customer.email || "-"}</TableCell>
                   <TableCell>{customer.phone || "-"}</TableCell>
                   <TableCell>
-                    {/* Actions dropdown will go here */}
+                    <div className="flex justify-end">
+                      <CustomerActions customerId={customer.id} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

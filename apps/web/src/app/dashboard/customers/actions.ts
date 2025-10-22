@@ -5,6 +5,7 @@ import { customers } from "@repo/db/schema";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { and, eq } from "drizzle-orm";
 
 const CustomerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -47,5 +48,33 @@ export async function addCustomer(prevState: any, formData: FormData) {
     return { message: "success" };
   } catch (e) {
     return { message: "Database Error: Failed to create customer." };
+  }
+}
+
+export async function deleteCustomer(customerId: string) {
+  const activeOrgId = cookies().get("active-org-id")?.value;
+
+  if (!activeOrgId) {
+    return { message: "Error: Active organization not found." };
+  }
+
+  try {
+    // The `where` clause ensures users can only delete customers within their active org.
+    // This is a second layer of protection on top of RLS.
+    const deleted = await db
+      .delete(customers)
+      .where(
+        and(eq(customers.id, customerId), eq(customers.orgId, activeOrgId))
+      )
+      .returning({ id: customers.id });
+
+    if (deleted.length === 0) {
+      return { message: "Error: Customer not found or you do not have permission to delete it." };
+    }
+
+    revalidatePath("/dashboard/customers");
+    return { message: "success" };
+  } catch (e) {
+    return { message: "Database Error: Failed to delete customer." };
   }
 }
