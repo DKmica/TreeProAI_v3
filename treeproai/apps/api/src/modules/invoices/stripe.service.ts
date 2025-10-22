@@ -7,7 +7,8 @@ export class StripeService {
 
   constructor() {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: "2024-06-20",
+      // apiVersion is optional and defaults to the latest.
+      // Removing it to resolve a specific type error.
     });
   }
 }

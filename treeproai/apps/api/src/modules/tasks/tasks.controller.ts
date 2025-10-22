@@ -1,6 +1,5 @@
 import { Controller, Get, Param, Req, UseGuards, NotFoundException } from "@nestjs/common";
-import { InjectQueue } from "@nestjs/bullmq";
-import { Queue } from "bullmq";
+import { analysisQueue } from "@/queues";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "@/common/guards/roles.guard";
 import { Roles } from "@/common/decorators/roles.decorator";
@@ -10,12 +9,10 @@ import { Roles } from "@/common/decorators/roles.decorator";
 @Controller({ path: "tasks", version: "1" })
 @UseGuards(RolesGuard)
 export class TasksController {
-  constructor(@InjectQueue("analysis") private readonly analysisQueue: Queue) {}
-
   @Get(":id")
   @Roles("owner", "admin", "member")
   async getTask(@Param("id") id: string, @Req() req: any) {
-    const job = await this.analysisQueue.getJob(id);
+    const job = await analysisQueue.getJob(id);
 
     if (!job) {
       throw new NotFoundException("Task not found");

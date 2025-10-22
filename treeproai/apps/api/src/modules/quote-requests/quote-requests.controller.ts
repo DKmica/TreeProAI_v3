@@ -1,8 +1,7 @@
 import { Controller, Post, Param, Req, UseGuards, Body, NotFoundException } from "@nestjs/common";
 import { z } from "zod";
 import { getDb, schema, eq } from "@/db/index";
-import { InjectQueue } from "@nestjs/bullmq";
-import { Queue } from "bullmq";
+import { analysisQueue } from "@/queues";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "@/common/guards/roles.guard";
 import { Roles } from "@/common/decorators/roles.decorator";
@@ -24,8 +23,6 @@ const CreateQuoteRequestSchema = z.object({
 @Controller({ path: "quote-requests", version: "1" })
 @UseGuards(RolesGuard)
 export class QuoteRequestsController {
-  constructor(@InjectQueue("analysis") private readonly analysisQueue: Queue) {}
-
   @Post()
   @Roles("owner", "admin", "member")
   async create(@Body() body: unknown, @Req() req: any) {
@@ -46,6 +43,12 @@ export class QuoteRequestsController {
       notes: input.notes,
     }).returning();
 
+    // Add job to the new standalone worker queue
+    await analysisQueue.add("analyze-quote-request", {
+      quoteRequestId: qr.id,
+      companyId: req.companyId
+    });
+
     return { id: qr.id };
   }
 
@@ -59,7 +62,7 @@ export class QuoteRequestsController {
       throw new NotFoundException("Quote request not found");
     }
 
-    const job = await this.analysisQueue.add("analyze-quote-request", {
+    const job = await analysisQueue.add("analyze-quote-request", {
       quoteRequestId: id,
       companyId: req.companyId
     });

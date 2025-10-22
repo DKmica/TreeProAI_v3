@@ -26,10 +26,12 @@ import { JobsModule } from "./modules/jobs/jobs.module";
     TasksModule,
     QueuesModule,
     QuotesModule,
+    JobsModule,
     InvoicesModule,
     WebhooksModule,
-    JobsModule,
   ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

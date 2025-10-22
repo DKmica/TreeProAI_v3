@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Param, Req, UseGuards, Body, NotFoundException } from "@nestjs/common";
 import { getDb, schema, eq } from "@/db/index";
-import { InjectQueue } from "@nestjs/bullmq";
-import { Queue } from "bullmq";
+import { notificationsQueue } from "@/queues";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "@/common/guards/roles.guard";
 import { Roles } from "@/common/decorators/roles.decorator";
@@ -17,8 +16,6 @@ const SendQuoteSchema = z.object({
 @Controller({ path: "quotes", version: "1" })
 @UseGuards(RolesGuard)
 export class QuotesController {
-  constructor(@InjectQueue("notifications") private readonly notificationsQueue: Queue) {}
-
   @Get(":id")
   @Roles("owner", "admin", "member")
   async getById(@Param("id") id: string, @Req() req: any) {
@@ -37,7 +34,7 @@ export class QuotesController {
   @Roles("owner", "admin", "member")
   async sendQuote(@Param("id") id: string, @Req() req: any, @Body() body: unknown) {
     const { method, recipient } = SendQuoteSchema.parse(body);
-    await this.notificationsQueue.add("send-quote", {
+    await notificationsQueue.add("send-quote", {
       quoteId: id,
       companyId: req.companyId,
       method,

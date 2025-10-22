@@ -1,6 +1,5 @@
 import { Controller, Get, Req, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { getAuth } from "@clerk/clerk-sdk-node";
 import { RolesGuard } from "@/common/guards/roles.guard";
 
 @ApiTags("Auth")
@@ -9,7 +8,7 @@ import { RolesGuard } from "@/common/guards/roles.guard";
 export class MeController {
   @Get()
   getMe(@Req() req: any) {
-    const auth = getAuth(req);
+    const { auth } = req;
     return {
       userId: auth.userId,
       companyId: req.companyId,

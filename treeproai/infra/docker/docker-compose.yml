@@ -86,6 +86,29 @@ services:
           path: ./packages
           target: /usr/src/app/packages
 
+  workers:
+    build:
+      context: ../..
+      dockerfile: infra/docker/api.Dockerfile
+    container_name: treeproai-workers
+    restart: unless-stopped
+    env_file: ../../.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/treeproai
+      - REDIS_URL=redis://redis:6379
+      - S3_ENDPOINT=http://minio:9000
+    command: pnpm --filter @treeproai/workers dev
+    depends_on:
+      - api
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/workers
+          target: /usr/src/app/apps/workers
+        - action: sync
+          path: ./packages
+          target: /usr/src/app/packages
+
   ai-vision:
     build:
       context: ../..

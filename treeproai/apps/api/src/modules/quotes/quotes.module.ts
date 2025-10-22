@@ -1,12 +1,9 @@
 import { Module, MiddlewareConsumer, NestModule } from "@nestjs/common";
 import { QuotesController } from "./quotes.controller";
-import { BullModule } from "@nestjs/bullmq";
 import { ClerkExpressWithAuth } from "@clerk/clerk-sdk-node";
 
 @Module({
-  imports: [
-    BullModule.registerQueue({ name: "notifications" }),
-  ],
+  imports: [],
   controllers: [QuotesController],
 })
 export class QuotesModule implements NestModule {
