@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { BullModule } from "@nestjs/bullmq";
 import { HttpModule } from "@nestjs/axios";
 import { AnalysisProcessor } from "./analysis.processor";
+import { NotificationsProcessor } from "./notifications.processor";
 
 @Module({
   imports: [
@@ -15,7 +16,10 @@ import { AnalysisProcessor } from "./analysis.processor";
     BullModule.registerQueue({
       name: "analysis",
     }),
+    BullModule.registerQueue({
+      name: "notifications",
+    }),
   ],
-  providers: [AnalysisProcessor],
+  providers: [AnalysisProcessor, NotificationsProcessor],
 })
 export class QueuesModule {}

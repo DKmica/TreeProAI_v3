@@ -9,6 +9,9 @@ import { QuoteRequestsModule } from "./modules/quote-requests/quote-requests.mod
 import { TasksModule } from "./modules/tasks/tasks.module";
 import { QueuesModule } from "./queues/queues.module";
 import { TenantMiddleware } from "./common/middleware/tenant.middleware";
+import { QuotesModule } from "./modules/quotes/quotes.module";
+import { InvoicesModule } from "./modules/invoices/invoices.module";
+import { WebhooksModule } from "./modules/webhooks/webhooks.module";
 
 @Module({
   imports: [
@@ -21,6 +24,9 @@ import { TenantMiddleware } from "./common/middleware/tenant.middleware";
     QuoteRequestsModule,
     TasksModule,
     QueuesModule,
+    QuotesModule,
+    InvoicesModule,
+    WebhooksModule,
   ],
 })
 export class AppModule implements NestModule {

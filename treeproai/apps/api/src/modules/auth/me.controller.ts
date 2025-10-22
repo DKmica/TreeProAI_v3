@@ -4,7 +4,6 @@ import { getAuth } from "@clerk/clerk-sdk-node";
 import { RolesGuard } from "@/common/guards/roles.guard";
 
 @ApiTags("Auth")
-@ApiBearerAuth()
 @Controller({ path: "me", version: "1" })
 @UseGuards(RolesGuard)
 export class MeController {

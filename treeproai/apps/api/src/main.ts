@@ -4,11 +4,22 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { json } from "express";
+import { json, Request as ExpressRequest } from "express";
+
+interface RequestWithRawBody extends ExpressRequest {
+  rawBody: Buffer;
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
-  app.use(json({ limit: "10mb" }));
+  app.use(json({
+    limit: "10mb",
+    verify: (req: RequestWithRawBody, res, buf) => {
+      if (req.originalUrl.startsWith('/v1/webhooks/stripe')) {
+        req.rawBody = buf;
+      }
+    },
+  }));
 
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
