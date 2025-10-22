@@ -22,6 +22,7 @@ import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { AddQuoteDialog } from "./add-quote-dialog";
+import { QuoteActions } from "./quote-actions";
 
 export default async function QuotesPage() {
   const cookieStore = cookies();
@@ -88,7 +89,9 @@ export default async function QuotesPage() {
                     {quote.createdAt ? new Date(quote.createdAt).toLocaleDateString() : '-'}
                   </TableCell>
                   <TableCell>
-                    {/* Actions dropdown will go here */}
+                    <div className="flex justify-end">
+                      <QuoteActions quote={quote} customers={customers} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
