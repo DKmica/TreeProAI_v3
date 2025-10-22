@@ -1,7 +1,7 @@
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,32 +26,32 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Layout from "@/components/layout/Layout";
-
-const mockCustomers = [
-  {
-    id: "cust_1",
-    name: "Liam Johnson",
-    email: "liam@example.com",
-    phone: "555-123-4567",
-    totalSpend: 1250.0,
-  },
-  {
-    id: "cust_2",
-    name: "Olivia Smith",
-    email: "olivia@example.com",
-    phone: "555-987-6543",
-    totalSpend: 850.5,
-  },
-  {
-    id: "cust_3",
-    name: "Noah Williams",
-    email: "noah@example.com",
-    phone: "555-246-8135",
-    totalSpend: 2300.0,
-  },
-];
+import { supabase } from "@/integrations/supabase/client";
+import { showError } from "@/utils/toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Customers = () => {
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("customers")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        showError(error.message);
+      } else {
+        setCustomers(data);
+      }
+      setLoading(false);
+    };
+    fetchCustomers();
+  }, []);
+
   return (
     <Layout>
       <div className="flex items-center justify-between mb-6">
@@ -78,56 +78,59 @@ const Customers = () => {
                 <TableHead>Name</TableHead>
                 <TableHead className="hidden md:table-cell">Email</TableHead>
                 <TableHead className="hidden md:table-cell">Phone</TableHead>
-                <TableHead className="text-right">Total Spend</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockCustomers.map((customer) => (
-                <TableRow key={customer.id}>
-                  <TableCell className="font-medium">
-                    <Link
-                      to={`/customers/${customer.id}`}
-                      className="hover:underline"
-                    >
-                      {customer.name}
-                    </Link>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {customer.email}
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {customer.phone}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {customer.totalSpend.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          aria-haspopup="true"
-                          size="icon"
-                          variant="ghost"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {loading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell colSpan={4}>
+                      <Skeleton className="h-8 w-full" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                customers.map((customer) => (
+                  <TableRow key={customer.id}>
+                    <TableCell className="font-medium">
+                      <Link
+                        to={`/customers/${customer.id}`}
+                        className="hover:underline"
+                      >
+                        {customer.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      {customer.email}
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      {customer.phone}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            aria-haspopup="true"
+                            size="icon"
+                            variant="ghost"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <DropdownMenuItem>Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

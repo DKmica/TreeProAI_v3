@@ -54,7 +54,7 @@ const NewLeadForm = ({ onSuccess }: NewLeadFormProps) => {
           name: values.name,
           email: values.email,
           phone: values.phone,
-          org_id: session.user.id, // Using user_id as org_id for now
+          user_id: session.user.id,
         })
         .select()
         .single();
@@ -65,6 +65,7 @@ const NewLeadForm = ({ onSuccess }: NewLeadFormProps) => {
       const score = Math.floor(Math.random() * 100) + 1;
       const { error: leadError } = await supabase.from("leads").insert({
         customer_id: customerData.id,
+        user_id: session.user.id,
         source: "Manual Entry",
         status: "new",
         score: score,

@@ -26,6 +26,10 @@ import {
 } from "@/components/ui/table";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { showError } from "@/utils/toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const mockQuotes = [
   {
@@ -79,6 +83,27 @@ const getStatusVariant = (status: string) => {
 };
 
 const Quotes = () => {
+  const [quotes, setQuotes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchQuotes = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("quotes")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        showError(error.message);
+      } else {
+        setQuotes(data);
+      }
+      setLoading(false);
+    };
+    fetchQuotes();
+  }, []);
+
   return (
     <Layout>
       <div className="flex items-center justify-between mb-6">
@@ -112,49 +137,61 @@ const Quotes = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockQuotes.map((quote) => (
-                <TableRow key={quote.id}>
-                  <TableCell className="font-medium">
-                    {quote.customerName}
-                  </TableCell>
-                  <TableCell>
-                    {new Date(quote.date).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusVariant(quote.status)}>
-                      {quote.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {quote.total.toLocaleString("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
-                        <DropdownMenuItem>Download PDF</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          disabled={quote.status !== "Approved"}
-                          onClick={() => alert(`Converting quote ${quote.id} to job!`)}
-                        >
-                          Convert to Job
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {loading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell colSpan={5}>
+                      <Skeleton className="h-8 w-full" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                quotes.map((quote) => (
+                  <TableRow key={quote.id}>
+                    <TableCell className="font-medium">
+                      {quote.customer_name}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(quote.date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusVariant(quote.status)}>
+                        {quote.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {parseFloat(quote.total).toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem>View Details</DropdownMenuItem>
+                          <DropdownMenuItem>Download PDF</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            disabled={quote.status !== "Approved"}
+                            onClick={() =>
+                              alert(`Converting quote ${quote.id} to job!`)
+                            }
+                          >
+                            Convert to Job
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

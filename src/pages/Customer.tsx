@@ -19,6 +19,10 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Edit, Mail, Phone, Bot } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { showError } from "@/utils/toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const mockCustomerData = {
   cust_1: {
@@ -63,7 +67,36 @@ const mockJobHistory = [
 
 const Customer = () => {
   const { id } = useParams();
-  const customer = mockCustomerData[id as keyof typeof mockCustomerData];
+  const [customer, setCustomer] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      if (!id) return;
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("customers")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        showError("Could not fetch customer details.");
+      } else {
+        setCustomer(data);
+      }
+      setLoading(false);
+    };
+    fetchCustomer();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <Skeleton className="h-screen w-full" />
+      </Layout>
+    );
+  }
 
   if (!customer) {
     return (
@@ -107,15 +140,8 @@ const Customer = () => {
             </CardContent>
             <CardFooter className="flex-col items-start gap-2 text-sm">
               <div>
-                <strong>Total Spend:</strong>{" "}
-                {customer.totalSpend.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
-              </div>
-              <div>
                 <strong>Customer Since:</strong>{" "}
-                {new Date(customer.joined).toLocaleDateString()}
+                {new Date(customer.created_at).toLocaleDateString()}
               </div>
             </CardFooter>
           </Card>
