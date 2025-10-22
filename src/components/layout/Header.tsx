@@ -1,11 +1,5 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { useAuth } from "@/context/AuthContext";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,183 +9,42 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  Home,
-  LineChart,
-  Package2,
-  PanelLeft,
-  Search,
-  Settings,
-  Users2,
-  Users,
-  FileText,
-  Calendar,
-  DollarSign,
-} from "lucide-react";
-import { NavLink } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { LogOut } from "lucide-react";
 
 const Header = () => {
+  const { supabase, session } = useAuth();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
+  const userEmail = session?.user?.email;
+  const userInitial = userEmail ? userEmail.charAt(0).toUpperCase() : "?";
+
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button size="icon" variant="outline" className="sm:hidden">
-            <PanelLeft className="h-5 w-5" />
-            <span className="sr-only">Toggle Menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="sm:max-w-xs">
-          <nav className="grid gap-6 text-lg font-medium">
-            <NavLink
-              to="/"
-              className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
-            >
-              <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
-              <span className="sr-only">TreeProAI</span>
-            </NavLink>
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
-                  isActive && "text-foreground"
-                )
-              }
-            >
-              <Home className="h-5 w-5" />
-              Dashboard
-            </NavLink>
-            <NavLink
-              to="/leads"
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
-                  isActive && "text-foreground"
-                )
-              }
-            >
-              <Users className="h-5 w-5" />
-              Leads
-            </NavLink>
-            <NavLink
-              to="/quotes"
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
-                  isActive && "text-foreground"
-                )
-              }
-            >
-              <FileText className="h-5 w-5" />
-              Quotes
-            </NavLink>
-            <NavLink
-              to="/jobs"
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
-                  isActive && "text-foreground"
-                )
-              }
-            >
-              <Calendar className="h-5 w-5" />
-              Jobs
-            </NavLink>
-            <NavLink
-              to="/invoices"
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
-                  isActive && "text-foreground"
-                )
-              }
-            >
-              <DollarSign className="h-5 w-5" />
-              Invoices
-            </NavLink>
-            <NavLink
-              to="/customers"
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
-                  isActive && "text-foreground"
-                )
-              }
-            >
-              <Users2 className="h-5 w-5" />
-              Customers
-            </NavLink>
-            <NavLink
-              to="/analytics"
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
-                  isActive && "text-foreground"
-                )
-              }
-            >
-              <LineChart className="h-5 w-5" />
-              Analytics
-            </NavLink>
-            <NavLink
-              to="/settings"
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
-                  isActive && "text-foreground"
-                )
-              }
-            >
-              <Settings className="h-5 w-5" />
-              Settings
-            </NavLink>
-          </nav>
-        </SheetContent>
-      </Sheet>
-      <Breadcrumb className="hidden md:flex">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <NavLink to="/">Dashboard</NavLink>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-      <div className="relative ml-auto flex-1 md:grow-0">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search..."
-          className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
-        />
-      </div>
+    <header className="flex h-16 items-center justify-end border-b bg-background px-4 md:px-6">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
-            <img
-              src="/placeholder.svg"
-              width={36}
-              height={36}
-              alt="Avatar"
-              className="overflow-hidden rounded-full"
-            />
+          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback>{userInitial}</AvatarFallback>
+            </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">My Account</p>
+              <p className="text-xs leading-none text-muted-foreground">
+                {userEmail}
+              </p>
+            </div>
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSignOut}>
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
