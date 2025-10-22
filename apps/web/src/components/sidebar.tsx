@@ -9,6 +9,7 @@ import {
   FileText,
   Calendar,
   Truck,
+  Briefcase,
 } from "lucide-react";
 import {
   Tooltip,
@@ -41,18 +42,29 @@ export default function Sidebar() {
             </TooltipTrigger>
             <TooltipContent side="right">Dashboard</TooltipContent>
           </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="/dashboard/customers"
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-              >
-                <Users className="h-5 w-5" />
-                <span className="sr-only">Customers</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Customers</TooltipContent>
-          </Tooltip>
+          <nav className="grid items-start px-4 text-sm font-medium">
+            <Link
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              href="/dashboard/customers"
+            >
+              <Users className="h-4 w-4" />
+              Customers
+            </Link>
+            <Link
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              href="/dashboard/quotes"
+            >
+              <FileText className="h-4 w-4" />
+              Quotes
+            </Link>
+            <Link
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              href="/dashboard/jobs"
+            >
+              <Briefcase className="h-4 w-4" />
+              Jobs
+            </Link>
+          </nav>
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
@@ -64,18 +76,6 @@ export default function Sidebar() {
               </Link>
             </TooltipTrigger>
             <TooltipContent side="right">Leads</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="/dashboard/quotes"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-              >
-                <FileText className="h-5 w-5" />
-                <span className="sr-only">Quotes</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Quotes</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
