@@ -14,8 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { db } from "@repo/db";
-import { leads as leadsSchema } from "@repo/db/schema";
+import { db, schema } from "@treeproai/db";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -32,9 +31,9 @@ export default async function LeadsPage() {
 
   const leads = await db
     .select()
-    .from(leadsSchema)
-    .where(eq(leadsSchema.orgId, activeOrgId))
-    .orderBy(leadsSchema.createdAt);
+    .from(schema.leads)
+    .where(eq(schema.leads.orgId, activeOrgId))
+    .orderBy(schema.leads.createdAt);
 
   return (
     <Card>

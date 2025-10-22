@@ -25,7 +25,7 @@ function SubmitButton() {
   );
 }
 
-type Lead = typeof leads.$inferSelect;
+type Lead = typeof import('@treeproai/db').schema.leads.$inferSelect;
 
 export function EditLeadForm({ lead, onFormAction }: { lead: Lead; onFormAction?: (state: { message: string }) => void }) {
   const initialState = { message: "", errors: {} };

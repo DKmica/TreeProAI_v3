@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
-import { db } from "@treeproai/db";
+import { db, schema } from "@treeproai/db";
 import { orgs, orgUsers } from "@treeproai/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -28,9 +28,9 @@ export default async function DashboardLayout({
       id: orgs.id,
       name: orgs.name,
     })
-    .from(orgUsers)
-    .where(eq(orgUsers.userId, user.id))
-    .leftJoin(orgs, eq(orgUsers.orgId, orgs.id));
+    .from(schema.orgUsers)
+    .where(eq(schema.orgUsers.userId, user.id))
+    .leftJoin(schema.orgs, eq(schema.orgUsers.orgId, schema.orgs.id));
 
   // Filter out any potential nulls from the join and ensure we have valid orgs
   const validUserOrgs = userOrgsResult

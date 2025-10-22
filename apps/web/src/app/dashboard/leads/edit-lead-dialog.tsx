@@ -10,7 +10,7 @@ import {
 import { EditLeadForm } from "./edit-lead-form";
 import type { leads } from "@repo/db/schema";
 
-type Lead = typeof leads.$inferSelect;
+type Lead = typeof import('@treeproai/db').schema.leads.$inferSelect;
 
 export function EditLeadDialog({
   lead,

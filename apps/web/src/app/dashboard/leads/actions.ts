@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "@repo/db";
+import { db, schema } from "@treeproai/db";
 import { leads } from "@repo/db/schema";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
@@ -45,7 +45,7 @@ export async function addLead(prevState: any, formData: FormData) {
   }
 
   try {
-    await db.insert(leads).values({
+    await db.insert(schema.leads).values({
       orgId: activeOrgId,
       name: validatedFields.data.name,
       email: validatedFields.data.email || null,
@@ -88,7 +88,7 @@ export async function updateLead(prevState: any, formData: FormData) {
 
   try {
     const updated = await db
-      .update(leads)
+      .update(schema.leads)
       .set({
         name,
         email: email || null,
@@ -96,8 +96,8 @@ export async function updateLead(prevState: any, formData: FormData) {
         source: source || null,
         status,
       })
-      .where(and(eq(leads.id, id), eq(leads.orgId, activeOrgId)))
-      .returning({ id: leads.id });
+      .where(and(eq(schema.leads.id, id), eq(schema.leads.orgId, activeOrgId)))
+      .returning({ id: schema.leads.id });
 
     if (updated.length === 0) {
       return { message: "Error: Lead not found or you do not have permission to edit it." };
@@ -119,9 +119,9 @@ export async function deleteLead(leadId: string) {
 
   try {
     const deleted = await db
-      .delete(leads)
-      .where(and(eq(leads.id, leadId), eq(leads.orgId, activeOrgId)))
-      .returning({ id: leads.id });
+      .delete(schema.leads)
+      .where(and(eq(schema.leads.id, leadId), eq(schema.leads.orgId, activeOrgId)))
+      .returning({ id: schema.leads.id });
 
     if (deleted.length === 0) {
       return { message: "Error: Lead not found or you do not have permission to delete it." };
