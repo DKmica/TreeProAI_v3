@@ -9,7 +9,9 @@ const EnvSchema = z.object({
   S3_ACCESS_KEY: z.string().min(1),
   S3_SECRET_KEY: z.string().min(1),
   CLERK_SECRET_KEY: z.string().optional(),
-  API_PORT: z.string().optional()
+  API_PORT: z.string().optional(),
+  STRIPE_SECRET_KEY: z.string().min(1).optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().min(1).optional()
 });
 
 export type Env = z.infer<typeof EnvSchema>;

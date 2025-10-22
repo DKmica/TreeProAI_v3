@@ -11,7 +11,9 @@ describe("EnvService", () => {
       S3_ENDPOINT: "http://localhost:9000",
       S3_BUCKET: "test-bucket",
       S3_ACCESS_KEY: "test-key",
-      S3_SECRET_KEY: "test-secret"
+      S3_SECRET_KEY: "test-secret",
+      STRIPE_SECRET_KEY: "sk_test_...",
+      STRIPE_WEBHOOK_SECRET: "whsec_..."
     };
   });
 
