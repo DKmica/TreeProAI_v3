@@ -1,18 +1,16 @@
-import path from "path"
-import react from "@vitejs/plugin-react-swc"
-import { defineConfig } from "vite"
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import tsconfigPaths from "vite-tsconfig-paths";
+import tailwindcss from "tailwindcss";
+import autoprefixer from "autoprefixer";
+import componentTagger from "@dyad-sh/react-vite-component-tagger";
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react({
-      plugins: [
-        // ["@dyad-sh/react-vite-component-tagger", {}]
-      ],
-    }),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+  plugins: [react(), tsconfigPaths(), componentTagger()],
+  css: {
+    postcss: {
+      plugins: [tailwindcss(), autoprefixer()],
     },
   },
-})
+});
