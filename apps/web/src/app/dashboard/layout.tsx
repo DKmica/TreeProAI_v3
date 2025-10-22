@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
-import { db } from "@repo/db";
-import { orgs, orgUsers } from "@repo/db/schema";
+import { db } from "@treeproai/db";
+import { orgs, orgUsers } from "@treeproai/db/schema";
 import { eq } from "drizzle-orm";
 
 export default async function DashboardLayout({
