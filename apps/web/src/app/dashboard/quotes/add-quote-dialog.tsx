@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { PlusCircle } from "lucide-react";
 import { QuoteForm } from "./quote-form";
-import type { customers } from "@repo/db/schema";
+import type { customers } from "@treeproai/db/schema";
 
 type Customer = typeof customers.$inferSelect;
 

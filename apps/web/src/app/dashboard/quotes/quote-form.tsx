@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { customers } from "@repo/db/schema";
+import type { customers } from "@treeproai/db/schema";
 import { Trash2 } from "lucide-react";
 
 type Customer = typeof customers.$inferSelect;

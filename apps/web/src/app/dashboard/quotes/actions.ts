@@ -1,7 +1,7 @@
 "use server";
 
-import { db } from "@repo/db";
-import { quotes } from "@repo/db/schema";
+import { db } from "@treeproai/db";
+import { quotes } from "@treeproai/db/schema";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";

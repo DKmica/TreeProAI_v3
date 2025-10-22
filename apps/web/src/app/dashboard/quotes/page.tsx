@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Card,
   CardContent,
@@ -16,8 +14,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { db } from "@repo/db";
-import { quotes as quotesSchema, customers as customersSchema } from "@repo/db/schema";
+import { db } from "@treeproai/db";
+import { quotes as quotesSchema, customers as customersSchema } from "@treeproai/db/schema";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
