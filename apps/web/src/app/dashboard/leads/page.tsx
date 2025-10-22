@@ -19,6 +19,7 @@ import { leads as leadsSchema } from "@repo/db/schema";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { AddLeadDialog } from "./add-lead-dialog";
 
 export default async function LeadsPage() {
   const cookieStore = cookies();
@@ -44,7 +45,7 @@ export default async function LeadsPage() {
               Manage your potential customers and track their progress.
             </CardDescription>
           </div>
-          {/* Add Lead Button will go here */}
+          <AddLeadDialog />
         </div>
       </CardHeader>
       <CardContent>
