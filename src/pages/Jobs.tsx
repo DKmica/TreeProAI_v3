@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Layout from "@/components/layout/Layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,49 +30,24 @@ import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import AssignCrewModal from "@/components/jobs/AssignCrewModal";
 import JobsMap from "@/components/jobs/JobsMap";
+import { supabase } from "@/integrations/supabase/client";
+import { showError } from "@/utils/toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const mockJobs = [
-  {
-    id: "job_1",
-    customerName: "John Doe",
-    address: "123 Main St, Anytown, USA",
-    date: "2023-11-05",
-    status: "Scheduled",
-    crew: "Crew A",
-    lat: 34.0522,
-    lon: -118.2437,
-  },
-  {
-    id: "job_2",
-    customerName: "Alice Johnson",
-    address: "456 Oak Ave, Anytown, USA",
-    date: "2023-11-06",
-    status: "In Progress",
-    crew: "Crew B",
-    lat: 34.06,
-    lon: -118.25,
-  },
-  {
-    id: "job_3",
-    customerName: "Sam Wilson",
-    address: "789 Pine Ln, Anytown, USA",
-    date: "2023-11-08",
-    status: "Completed",
-    crew: "Crew A",
-    lat: 34.045,
-    lon: -118.23,
-  },
-  {
-    id: "job_4",
-    customerName: "Emily Davis",
-    address: "101 Maple Dr, Anytown, USA",
-    date: "2023-11-10",
-    status: "Scheduled",
-    crew: "Not Assigned",
-    lat: 34.065,
-    lon: -118.26,
-  },
-];
+type Job = {
+  id: string;
+  customer_name: string;
+  address: string;
+  date: string;
+  status: string;
+  crew_id: string | null;
+  lat: number | null;
+  lon: number | null;
+  crews: {
+    id: string;
+    name: string;
+  } | null;
+};
 
 const getStatusVariant = (status: string) => {
   switch (status) {
@@ -89,11 +64,31 @@ const getStatusVariant = (status: string) => {
 
 const Jobs = () => {
   const [isAssignCrewModalOpen, setIsAssignCrewModalOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState<(typeof mockJobs)[0] | null>(
-    null,
-  );
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleAssignCrewClick = (job: (typeof mockJobs)[0]) => {
+  const fetchJobs = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("jobs")
+      .select("*, crews(id, name)")
+      .order("date", { ascending: true });
+
+    if (error) {
+      showError(error.message);
+      setJobs([]);
+    } else {
+      setJobs(data as Job[]);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchJobs();
+  }, [fetchJobs]);
+
+  const handleAssignCrewClick = (job: Job) => {
     setSelectedJob(job);
     setIsAssignCrewModalOpen(true);
   };
@@ -101,8 +96,10 @@ const Jobs = () => {
   const handleAssignSuccess = () => {
     setIsAssignCrewModalOpen(false);
     setSelectedJob(null);
-    // In a real app, we would refetch the jobs data here.
+    fetchJobs();
   };
+
+  const mapJobs = jobs.map(j => ({...j, customerName: j.customer_name})).filter(j => j.lat && j.lon) as any;
 
   return (
     <Layout>
@@ -136,62 +133,63 @@ const Jobs = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Customer</TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Address
-                    </TableHead>
-                    <TableHead className="hidden sm:table-cell">Date</TableHead>
-                    <TableHead>Crew</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="w-[50px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mockJobs.map((job) => (
-                    <TableRow key={job.id}>
-                      <TableCell className="font-medium">
-                        {job.customerName}
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {job.address}
-                      </TableCell>
-                      <TableCell className="hidden sm:table-cell">
-                        {new Date(job.date).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>{job.crew}</TableCell>
-                      <TableCell>
-                        <Badge variant={getStatusVariant(job.status)}>
-                          {job.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">Open menu</span>
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>View Details</DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleAssignCrewClick(job)}
-                            >
-                              Assign Crew
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>Mark as Complete</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+              {loading ? (
+                <TableSkeleton />
+              ) : jobs.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Customer</TableHead>
+                      <TableHead className="hidden md:table-cell">Address</TableHead>
+                      <TableHead className="hidden sm:table-cell">Date</TableHead>
+                      <TableHead>Crew</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="w-[50px]">Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {jobs.map((job) => (
+                      <TableRow key={job.id}>
+                        <TableCell className="font-medium">{job.customer_name}</TableCell>
+                        <TableCell className="hidden md:table-cell">{job.address}</TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                          {new Date(job.date).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>{job.crews?.name || "Not Assigned"}</TableCell>
+                        <TableCell>
+                          <Badge variant={getStatusVariant(job.status)}>{job.status}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem>View Details</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleAssignCrewClick(job)}>
+                                Assign Crew
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem>Mark as Complete</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-16">
+                  <h3 className="text-xl font-semibold">No jobs yet</h3>
+                  <p className="text-muted-foreground mt-2">
+                    Click "New Job" to schedule your first job.
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -199,12 +197,10 @@ const Jobs = () => {
           <Card>
             <CardHeader>
               <CardTitle>Map View</CardTitle>
-              <CardDescription>
-                A map of all your scheduled jobs.
-              </CardDescription>
+              <CardDescription>A map of all your scheduled jobs.</CardDescription>
             </CardHeader>
             <CardContent>
-              <JobsMap jobs={mockJobs} />
+              <JobsMap jobs={mapJobs} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -218,5 +214,14 @@ const Jobs = () => {
     </Layout>
   );
 };
+
+const TableSkeleton = () => (
+  <div className="space-y-4">
+    <Skeleton className="h-10 w-full" />
+    <Skeleton className="h-10 w-full" />
+    <Skeleton className="h-10 w-full" />
+    <Skeleton className="h-10 w-full" />
+  </div>
+);
 
 export default Jobs;

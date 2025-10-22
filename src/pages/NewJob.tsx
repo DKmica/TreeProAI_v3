@@ -31,7 +31,10 @@ import {
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { showSuccess } from "@/utils/toast";
+import { showSuccess, showError } from "@/utils/toast";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const formSchema = z.object({
   customerName: z.string().min(2, "Customer name is required."),
@@ -44,6 +47,8 @@ const formSchema = z.object({
 
 const NewJob = () => {
   const navigate = useNavigate();
+  const { session } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,10 +58,28 @@ const NewJob = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log("New Job Submitted:", values);
-    showSuccess("New job created successfully!");
-    navigate("/jobs");
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!session?.user) {
+      showError("You must be logged in to create a job.");
+      return;
+    }
+    setIsSubmitting(true);
+
+    const { error } = await supabase.from("jobs").insert({
+      ...values,
+      customer_name: values.customerName,
+      user_id: session.user.id,
+      status: "Scheduled",
+    });
+
+    setIsSubmitting(false);
+
+    if (error) {
+      showError(error.message);
+    } else {
+      showSuccess("New job created successfully!");
+      navigate("/jobs");
+    }
   };
 
   return (
@@ -164,8 +187,8 @@ const NewJob = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Create Job
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Creating Job..." : "Create Job"}
               </Button>
             </form>
           </Form>
