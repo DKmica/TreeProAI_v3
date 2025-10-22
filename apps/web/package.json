@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
-    "@supabase/ssr": "^0.3.0",
+    "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.43.1",
     "@treeproai/db": "workspace:*",
     "@repo/ui": "workspace:*",

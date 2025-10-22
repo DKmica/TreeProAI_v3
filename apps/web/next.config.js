@@ -4,7 +4,7 @@ const path = require("path");
 const nextConfig = {
   // Explicitly pin the Turbopack root so Next can resolve packages from the monorepo root.
   turbopack: {
-    root: path.join(__dirname, "../.."),
+    root: path.join(__dirname, "../../"),
   },
 };
 
