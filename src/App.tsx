@@ -3,6 +3,7 @@ import Index from "./pages/Index";
 import Leads from "./pages/Leads";
 import Quotes from "./pages/Quotes";
 import Jobs from "./pages/Jobs";
+import NewJob from "./pages/NewJob";
 import Invoices from "./pages/Invoices";
 import Customers from "./pages/Customers";
 import Customer from "./pages/Customer";
@@ -23,6 +24,7 @@ function App() {
             <Route path="/leads" element={<Leads />} />
             <Route path="/quotes" element={<Quotes />} />
             <Route path="/jobs" element={<Jobs />} />
+            <Route path="/jobs/new" element={<NewJob />} />
             <Route path="/invoices" element={<Invoices />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/customers/:id" element={<Customer />} />
