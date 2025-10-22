@@ -20,6 +20,7 @@ import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { AddLeadDialog } from "./add-lead-dialog";
+import { LeadActions } from "./lead-actions";
 
 export default async function LeadsPage() {
   const cookieStore = cookies();
@@ -74,7 +75,9 @@ export default async function LeadsPage() {
                   <TableCell>{lead.email || "-"}</TableCell>
                   <TableCell>{lead.phone || "-"}</TableCell>
                   <TableCell>
-                    {/* Actions dropdown will go here */}
+                    <div className="flex justify-end">
+                      <LeadActions lead={lead} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
