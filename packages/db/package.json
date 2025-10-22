@@ -2,6 +2,10 @@
   "name": "@treeproai/db",
   "version": "0.1.0",
   "private": true,
+  "exports": {
+    ".": "./index.ts",
+    "./schema": "./src/schema/index.ts"
+  },
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {

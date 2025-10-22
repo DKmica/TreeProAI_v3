@@ -24,7 +24,7 @@ import { QuoteActions } from "./quote-actions";
 
 export default async function QuotesPage() {
   const cookieStore = cookies();
-  const activeOrgId = cookieStore.get("active-org-id")?.value;
+  const activeOrgId = cookieStore.get("active-org")?.value;
 
   if (!activeOrgId) {
     redirect("/dashboard");
