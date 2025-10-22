@@ -1,20 +1,34 @@
+import { Worker } from "bullmq";
 import "dotenv/config";
-import { quoteWorker, scheduleWorker, alertWorker } from "./queues";
 
-function setupWorkerListeners(workerName: string, worker: any) {
-  worker.on("completed", (job: any, result: any) => {
-    console.log(`${workerName} job ${job.id} completed with result:`, result);
-  });
+import quoteProcessor from "./processors/quote";
+import scheduleProcessor from "./processors/schedule";
+import alertProcessor from "./processors/alerts";
 
-  worker.on("failed", (job: any, err: Error) => {
-    console.error(`${workerName} job ${job.id} failed with error:`, err.message);
-  });
-}
+const connection = {
+  host: process.env.REDIS_URL ? new URL(process.env.REDIS_URL).hostname : "localhost",
+  port: process.env.REDIS_URL ? parseInt(new URL(process.env.REDIS_URL).port, 10) : 6379,
+};
 
-console.log("🚀 Starting workers...");
+console.log("Starting workers...");
 
-setupWorkerListeners("Quote", quoteWorker);
-setupWorkerListeners("Schedule", scheduleWorker);
-setupWorkerListeners("Alert", alertWorker);
+export const quoteWorker = new Worker("quote", quoteProcessor, { connection });
+export const scheduleWorker = new Worker("schedule", scheduleProcessor, { connection });
+export const alertWorker = new Worker("alerts", alertProcessor, { connection });
 
-console.log("✅ Workers are running and waiting for jobs.");
+console.log("Workers started.");
+
+// Graceful shutdown
+const shutdown = async () => {
+  console.log("Closing workers...");
+  await Promise.all([
+    quoteWorker.close(),
+    scheduleWorker.close(),
+    alertWorker.close(),
+  ]);
+  console.log("Workers closed.");
+  process.exit(0);
+};
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
