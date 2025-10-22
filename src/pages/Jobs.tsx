@@ -26,9 +26,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MoreHorizontal, PlusCircle, Map } from "lucide-react";
+import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import AssignCrewModal from "@/components/jobs/AssignCrewModal";
+import JobsMap from "@/components/jobs/JobsMap";
 
 const mockJobs = [
   {
@@ -38,6 +39,8 @@ const mockJobs = [
     date: "2023-11-05",
     status: "Scheduled",
     crew: "Crew A",
+    lat: 34.0522,
+    lon: -118.2437,
   },
   {
     id: "job_2",
@@ -46,6 +49,8 @@ const mockJobs = [
     date: "2023-11-06",
     status: "In Progress",
     crew: "Crew B",
+    lat: 34.06,
+    lon: -118.25,
   },
   {
     id: "job_3",
@@ -54,6 +59,8 @@ const mockJobs = [
     date: "2023-11-08",
     status: "Completed",
     crew: "Crew A",
+    lat: 34.045,
+    lon: -118.23,
   },
   {
     id: "job_4",
@@ -62,6 +69,8 @@ const mockJobs = [
     date: "2023-11-10",
     status: "Scheduled",
     crew: "Not Assigned",
+    lat: 34.065,
+    lon: -118.26,
   },
 ];
 
@@ -80,11 +89,11 @@ const getStatusVariant = (status: string) => {
 
 const Jobs = () => {
   const [isAssignCrewModalOpen, setIsAssignCrewModalOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState<typeof mockJobs[0] | null>(
+  const [selectedJob, setSelectedJob] = useState<(typeof mockJobs)[0] | null>(
     null,
   );
 
-  const handleAssignCrewClick = (job: typeof mockJobs[0]) => {
+  const handleAssignCrewClick = (job: (typeof mockJobs)[0]) => {
     setSelectedJob(job);
     setIsAssignCrewModalOpen(true);
   };
@@ -194,17 +203,8 @@ const Jobs = () => {
                 A map of all your scheduled jobs.
               </CardDescription>
             </CardHeader>
-            <CardContent className="h-[600px] flex items-center justify-center bg-muted rounded-md">
-              <div className="text-center">
-                <Map className="mx-auto h-12 w-12 text-muted-foreground" />
-                <h3 className="mt-4 text-lg font-semibold">
-                  Map View Coming Soon
-                </h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  This area will display an interactive map of your job
-                  locations.
-                </p>
-              </div>
+            <CardContent>
+              <JobsMap jobs={mockJobs} />
             </CardContent>
           </Card>
         </TabsContent>
