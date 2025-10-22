@@ -15,8 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { db } from "@repo/db";
-import { customers as customersSchema } from "@repo/db/schema";
+import { db, schema } from "@treeproai/db";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -34,8 +33,8 @@ export default async function CustomersPage() {
 
   const customers = await db
     .select()
-    .from(customersSchema)
-    .where(eq(customersSchema.orgId, activeOrgId));
+    .from(schema.customers)
+    .where(eq(schema.customers.orgId, activeOrgId));
 
   return (
     <Card>

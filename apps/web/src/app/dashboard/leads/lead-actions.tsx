@@ -23,7 +23,6 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { deleteLead } from "./actions";
 import { EditLeadDialog } from "./edit-lead-dialog";
-import type { leads } from "@repo/db/schema";
 
 type Lead = typeof import('@treeproai/db').schema.leads.$inferSelect;
 

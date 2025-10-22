@@ -23,7 +23,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { deleteCustomer } from "./actions";
 import { EditCustomerDialog } from "./edit-customer-dialog";
-import type { customers } from "@repo/db/schema";
+import type { customers } from "@treeproai/db/schema";
 
 type Customer = typeof customers.$inferSelect;
 

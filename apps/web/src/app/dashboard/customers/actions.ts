@@ -1,7 +1,6 @@
 "use server";
 
-import { db } from "@repo/db";
-import { customers } from "@repo/db/schema";
+import { db, schema } from "@treeproai/db";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -44,7 +43,7 @@ export async function addCustomer(prevState: any, formData: FormData) {
   }
 
   try {
-    await db.insert(customers).values({
+    await db.insert(schema.customers).values({
       orgId: activeOrgId,
       name: validatedFields.data.name,
       email: validatedFields.data.email || null,
@@ -85,15 +84,20 @@ export async function updateCustomer(prevState: any, formData: FormData) {
 
   try {
     const updated = await db
-      .update(customers)
+      .update(schema.customers)
       .set({
         name,
         email: email || null,
         phone: phone || null,
         address: address || null,
       })
-      .where(and(eq(customers.id, id), eq(customers.orgId, activeOrgId)))
-      .returning({ id: customers.id });
+      .where(
+        and(
+          eq(schema.customers.id, id),
+          eq(schema.customers.orgId, activeOrgId),
+        ),
+      )
+      .returning({ id: schema.customers.id });
 
     if (updated.length === 0) {
       return { message: "Error: Customer not found or you do not have permission to edit it." };
@@ -117,11 +121,14 @@ export async function deleteCustomer(customerId: string) {
     // The `where` clause ensures users can only delete customers within their active org.
     // This is a second layer of protection on top of RLS.
     const deleted = await db
-      .delete(customers)
+      .delete(schema.customers)
       .where(
-        and(eq(customers.id, customerId), eq(customers.orgId, activeOrgId))
+        and(
+          eq(schema.customers.id, customerId),
+          eq(schema.customers.orgId, activeOrgId),
+        ),
       )
-      .returning({ id: customers.id });
+      .returning({ id: schema.customers.id });
 
     if (deleted.length === 0) {
       return { message: "Error: Customer not found or you do not have permission to delete it." };
