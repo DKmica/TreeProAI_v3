@@ -165,6 +165,20 @@ services:
           path: ./services/forecast
           target: /app
 
+  routing:
+    build:
+      context: ../..
+      dockerfile: infra/docker/routing.Dockerfile
+    container_name: treeproai-routing
+    restart: unless-stopped
+    ports:
+      - "8004:8004"
+    develop:
+      watch:
+        - action: sync
+          path: ./services/routing
+          target: /app
+
   web:
     build:
       context: ../..
