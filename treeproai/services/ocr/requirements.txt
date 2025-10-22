@@ -1,4 +1,0 @@
-fastapi
-uvicorn
-# Using paddleocr-cpu for broader compatibility without a GPU
-paddleocr-cpu
