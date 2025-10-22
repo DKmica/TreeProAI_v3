@@ -11,8 +11,22 @@ import { CircleUser } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
+import OrgSwitcher from "./org-switcher";
 
-export default function Header({ user }: { user: User }) {
+type Org = {
+  id: string;
+  name: string;
+};
+
+export default function Header({
+  user,
+  userOrgs,
+  activeOrg,
+}: {
+  user: User;
+  userOrgs: Org[];
+  activeOrg: Org;
+}) {
   const signOut = async () => {
     "use server";
     const supabase = createClient();
@@ -22,6 +36,7 @@ export default function Header({ user }: { user: User }) {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+      <OrgSwitcher userOrgs={userOrgs} activeOrg={activeOrg} />
       <div className="relative ml-auto flex-1 md:grow-0">
         {/* Search bar can go here later */}
       </div>
