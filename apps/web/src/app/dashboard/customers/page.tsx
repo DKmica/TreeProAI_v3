@@ -20,6 +20,7 @@ import { customers as customersSchema } from "@repo/db/schema";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { AddCustomerDialog } from "./add-customer-dialog";
 
 export default async function CustomersPage() {
   const cookieStore = cookies();
@@ -45,12 +46,7 @@ export default async function CustomersPage() {
               Manage your customers and view their details.
             </CardDescription>
           </div>
-          <Button size="sm" className="h-8 gap-1">
-            <PlusCircle className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Add Customer
-            </span>
-          </Button>
+          <AddCustomerDialog />
         </div>
       </CardHeader>
       <CardContent>
