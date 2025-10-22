@@ -1,5 +1,8 @@
+'use client';
+
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export default async function HomePage() {
   const supabase = createClient();
@@ -8,7 +11,7 @@ export default async function HomePage() {
   
   // If user is authenticated, redirect to dashboard
   if (user) {
-    return redirect('/dashboard');
+    redirect('/dashboard');
   }
   
   return (
