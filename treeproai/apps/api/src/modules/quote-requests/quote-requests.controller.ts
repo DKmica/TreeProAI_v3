@@ -1,10 +1,12 @@
-import { Controller, Post, Get, Param, Req, UseGuards, Body } from "@nestjs/common";
+import { Controller, Post, Get, Param, Req, UseGuards, Body, NotFoundException } from "@nestjs/common";
 import { z } from "zod";
 import { AuthGuard } from "../../common/guards/auth.guard";
 import { RbacGuard } from "../../common/guards/rbac.guard";
 import { Roles } from "../../common/decorators/roles.decorator";
-import { getDb, schema } from "@treeproai/db";
+import { getDb, schema, eq } from "@treeproai/db";
 import { randomUUID } from "node:crypto";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 
 const CreateQuoteRequestSchema = z.object({
   leadId: z.string().uuid().optional(),
@@ -14,6 +16,8 @@ const CreateQuoteRequestSchema = z.object({
 @Controller("quote-requests")
 @UseGuards(AuthGuard, RbacGuard)
 export class QuoteRequestsController {
+  constructor(@InjectQueue("analyzeImages") private readonly analyzeImagesQueue: Queue) {}
+
   @Post()
   @Roles("OWNER", "MANAGER", "SALES")
   async create(@Body() body: unknown, @Req() req: any) {
@@ -39,9 +43,23 @@ export class QuoteRequestsController {
   @Post(":id/analyze")
   @Roles("OWNER", "MANAGER", "SALES")
   async analyze(@Param("id") id: string, @Req() req: any) {
-    // In a full implementation, this would enqueue a BullMQ job
-    // For now, we'll return a mock task ID
-    const taskId = randomUUID();
-    return { taskId };
+    const db = getDb();
+    const quoteRequest = await db.query.quoteRequests.findFirst({
+      where: (qr, { and, eq }) => and(
+        eq(qr.id, id),
+        eq(qr.companyId, req.companyId)
+      )
+    });
+
+    if (!quoteRequest) {
+      throw new NotFoundException("Quote request not found");
+    }
+
+    const job = await this.analyzeImagesQueue.add("analyze", {
+      quoteRequestId: id,
+      companyId: req.companyId
+    });
+
+    return { taskId: job.id };
   }
 }
