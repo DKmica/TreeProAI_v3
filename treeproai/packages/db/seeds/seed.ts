@@ -27,6 +27,19 @@ async function main() {
   });
   console.log(`Created OWNER user: ${ownerEmail}`);
 
+  // Add a company HQ address
+  await db.insert(addresses).values({
+    companyId,
+    kind: "COMPANY_HQ",
+    street: "1600 Amphitheatre Parkway",
+    city: "Mountain View",
+    state: "CA",
+    zip: "94043",
+    lat: "37.422476",
+    lng: "-122.084249",
+  });
+  console.log(`Created company HQ address.`);
+
   // 3. Create customers and leads
   const firstNames = ["Alex", "Jordan", "Taylor", "Morgan", "Casey"];
   const lastNames = ["Green", "Oak", "Pine", "Willow", "Maple"];
@@ -46,7 +59,7 @@ async function main() {
   const allLeads = await db.select().from(leads).where(sql`${leads.companyId} = ${companyId}`);
   const leadForQuote = allLeads[0];
 
-  const [address] = await db.insert(addresses).values({ companyId, kind: "JOB_SITE", street: "123 Main St", city: "Anytown", state: "CA", zip: "12345" }).returning();
+  const [address] = await db.insert(addresses).values({ companyId, kind: "JOB_SITE", street: "1 Infinite Loop", city: "Cupertino", state: "CA", zip: "95014", lat: "37.33182", lng: "-122.03118" }).returning();
 
   const imageKeys = [`${companyId}/demo-image-1.jpg`, `${companyId}/demo-image-2.jpg`];
   const [qr] = await db.insert(quoteRequests).values({ companyId, customerId: leadForQuote.customerId, addressId: address.id, imageKeys, notes: "Two large oaks in the front yard." }).returning();

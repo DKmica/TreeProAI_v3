@@ -12,6 +12,7 @@ import { TenantMiddleware } from "./common/middleware/tenant.middleware";
 import { QuotesModule } from "./modules/quotes/quotes.module";
 import { InvoicesModule } from "./modules/invoices/invoices.module";
 import { WebhooksModule } from "./modules/webhooks/webhooks.module";
+import { JobsModule } from "./modules/jobs/jobs.module";
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { WebhooksModule } from "./modules/webhooks/webhooks.module";
     QuotesModule,
     InvoicesModule,
     WebhooksModule,
+    JobsModule,
   ],
 })
 export class AppModule implements NestModule {
