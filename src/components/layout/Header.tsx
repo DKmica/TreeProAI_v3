@@ -20,13 +20,15 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Home,
   LineChart,
-  Package,
   Package2,
   PanelLeft,
   Search,
   Settings,
-  ShoppingCart,
   Users2,
+  Users,
+  FileText,
+  Calendar,
+  DollarSign,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -64,7 +66,7 @@ const Header = () => {
               Dashboard
             </NavLink>
             <NavLink
-              to="/orders"
+              to="/leads"
               className={({ isActive }) =>
                 cn(
                   "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
@@ -72,11 +74,11 @@ const Header = () => {
                 )
               }
             >
-              <ShoppingCart className="h-5 w-5" />
-              Orders
+              <Users className="h-5 w-5" />
+              Leads
             </NavLink>
             <NavLink
-              to="/products"
+              to="/quotes"
               className={({ isActive }) =>
                 cn(
                   "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
@@ -84,8 +86,32 @@ const Header = () => {
                 )
               }
             >
-              <Package className="h-5 w-5" />
-              Products
+              <FileText className="h-5 w-5" />
+              Quotes
+            </NavLink>
+            <NavLink
+              to="/jobs"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                  isActive && "text-foreground"
+                )
+              }
+            >
+              <Calendar className="h-5 w-5" />
+              Jobs
+            </NavLink>
+            <NavLink
+              to="/invoices"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground",
+                  isActive && "text-foreground"
+                )
+              }
+            >
+              <DollarSign className="h-5 w-5" />
+              Invoices
             </NavLink>
             <NavLink
               to="/customers"

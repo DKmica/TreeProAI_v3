@@ -1,11 +1,13 @@
 import {
   Home,
   LineChart,
-  Package,
   Package2,
   Settings,
-  ShoppingCart,
   Users2,
+  Users,
+  FileText,
+  Calendar,
+  DollarSign,
 } from "lucide-react";
 import {
   Tooltip,
@@ -48,8 +50,10 @@ const Sidebar = () => {
           <span className="sr-only">TreeProAI</span>
         </NavLink>
         <NavItem to="/" icon={Home} label="Dashboard" />
-        <NavItem to="/orders" icon={ShoppingCart} label="Orders" />
-        <NavItem to="/products" icon={Package} label="Products" />
+        <NavItem to="/leads" icon={Users} label="Leads" />
+        <NavItem to="/quotes" icon={FileText} label="Quotes" />
+        <NavItem to="/jobs" icon={Calendar} label="Jobs" />
+        <NavItem to="/invoices" icon={DollarSign} label="Invoices" />
         <NavItem to="/customers" icon={Users2} label="Customers" />
         <NavItem to="/analytics" icon={LineChart} label="Analytics" />
       </nav>
