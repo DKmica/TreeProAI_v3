@@ -151,6 +151,20 @@ services:
           path: ./services/ai-tabular
           target: /app
 
+  forecast:
+    build:
+      context: ../..
+      dockerfile: infra/docker/forecast.Dockerfile
+    container_name: treeproai-forecast
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    develop:
+      watch:
+        - action: sync
+          path: ./services/forecast
+          target: /app
+
   web:
     build:
       context: ../..
