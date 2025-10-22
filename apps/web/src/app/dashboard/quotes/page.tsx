@@ -17,10 +17,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { db } from "@repo/db";
-import { quotes as quotesSchema } from "@repo/db/schema";
+import { quotes as quotesSchema, customers as customersSchema } from "@repo/db/schema";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { AddQuoteDialog } from "./add-quote-dialog";
 
 export default async function QuotesPage() {
   const cookieStore = cookies();
@@ -38,6 +39,11 @@ export default async function QuotesPage() {
     orderBy: (quotes, { desc }) => [desc(quotes.createdAt)],
   });
 
+  const customers = await db.query.customers.findMany({
+    where: eq(customersSchema.orgId, activeOrgId),
+    orderBy: (customers, { asc }) => [asc(customers.name)],
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -48,7 +54,7 @@ export default async function QuotesPage() {
               Create and manage quotes for your customers.
             </CardDescription>
           </div>
-          {/* Add Quote Button will go here */}
+          <AddQuoteDialog customers={customers} />
         </div>
       </CardHeader>
       <CardContent>

@@ -8,7 +8,7 @@ export const quotes = pgTable("quotes", {
   orgId: uuid("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
   customerId: uuid("customer_id").notNull().references(() => customers.id, { onDelete: "cascade" }),
   status: text("status").notNull().default("draft"),
-  total: numeric("total"),
+  total: numeric("total").notNull(),
   lineItems: jsonb("line_items"),
   sentAt: timestamp("sent_at", { withTimezone: true }),
   expiresAt: timestamp("expires_at", { withTimezone: true }),
