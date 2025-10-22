@@ -1,14 +1,10 @@
+const path = require("path");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    // Fallback for older Next versions
-    turbo: {
-      root: __dirname,
-    },
-  },
-  // Next 16+
+  // Explicitly pin the Turbopack root so Next can resolve packages from the monorepo root.
   turbopack: {
-    root: __dirname,
+    root: path.join(__dirname, "../.."),
   },
 };
 
