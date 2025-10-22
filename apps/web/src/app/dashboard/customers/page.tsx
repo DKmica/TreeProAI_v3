@@ -71,7 +71,7 @@ export default async function CustomersPage() {
                   <TableCell>{customer.phone || "-"}</TableCell>
                   <TableCell>
                     <div className="flex justify-end">
-                      <CustomerActions customerId={customer.id} />
+                      <CustomerActions customer={customer} />
                     </div>
                   </TableCell>
                 </TableRow>

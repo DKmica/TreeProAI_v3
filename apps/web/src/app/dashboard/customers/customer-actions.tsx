@@ -22,15 +22,20 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { deleteCustomer } from "./actions";
+import { EditCustomerDialog } from "./edit-customer-dialog";
+import type { customers } from "@repo/db/schema";
 
-export function CustomerActions({ customerId }: { customerId: string }) {
+type Customer = typeof customers.$inferSelect;
+
+export function CustomerActions({ customer }: { customer: Customer }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
   const handleDelete = () => {
     startTransition(async () => {
-      const result = await deleteCustomer(customerId);
+      const result = await deleteCustomer(customer.id);
       if (result.message === "success") {
         toast({
           title: "Success",
@@ -67,6 +72,12 @@ export function CustomerActions({ customerId }: { customerId: string }) {
         </AlertDialogContent>
       </AlertDialog>
 
+      <EditCustomerDialog
+        customer={customer}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+      />
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button aria-haspopup="true" size="icon" variant="ghost">
@@ -76,7 +87,9 @@ export function CustomerActions({ customerId }: { customerId: string }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem>Edit</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
+            Edit
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="text-red-600"
             onClick={() => setIsDeleteDialogOpen(true)}

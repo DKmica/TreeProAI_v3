@@ -14,6 +14,14 @@ const CustomerSchema = z.object({
   address: z.string().optional(),
 });
 
+const UpdateCustomerSchema = z.object({
+  id: z.string(),
+  name: z.string().min(2, "Name must be at least 2 characters."),
+  email: z.string().email("Invalid email address.").optional().or(z.literal('')),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+});
+
 export async function addCustomer(prevState: any, formData: FormData) {
   const activeOrgId = cookies().get("active-org-id")?.value;
 
@@ -48,6 +56,53 @@ export async function addCustomer(prevState: any, formData: FormData) {
     return { message: "success" };
   } catch (e) {
     return { message: "Database Error: Failed to create customer." };
+  }
+}
+
+export async function updateCustomer(prevState: any, formData: FormData) {
+  const activeOrgId = cookies().get("active-org-id")?.value;
+
+  if (!activeOrgId) {
+    return { message: "Error: Active organization not found." };
+  }
+
+  const validatedFields = UpdateCustomerSchema.safeParse({
+    id: formData.get("id"),
+    name: formData.get("name"),
+    email: formData.get("email"),
+    phone: formData.get("phone"),
+    address: formData.get("address"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Validation Error.",
+    };
+  }
+
+  const { id, name, email, phone, address } = validatedFields.data;
+
+  try {
+    const updated = await db
+      .update(customers)
+      .set({
+        name,
+        email: email || null,
+        phone: phone || null,
+        address: address || null,
+      })
+      .where(and(eq(customers.id, id), eq(customers.orgId, activeOrgId)))
+      .returning({ id: customers.id });
+
+    if (updated.length === 0) {
+      return { message: "Error: Customer not found or you do not have permission to edit it." };
+    }
+
+    revalidatePath("/dashboard/customers");
+    return { message: "success" };
+  } catch (e) {
+    return { message: "Database Error: Failed to update customer." };
   }
 }
 
