@@ -14,3 +14,4 @@ export * from "./payments";
 export * from "./attachments";
 export * from "./tenant_settings";
 export * from "./webhooks";
+export * from "./kb";
