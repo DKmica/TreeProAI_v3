@@ -11,6 +11,7 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           </Routes>
         </Router>
       </TooltipProvider>
+      <Toaster />
     </ThemeProvider>
   );
 }

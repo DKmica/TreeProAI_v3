@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MoreHorizontal, PlusCircle, Map } from "lucide-react";
 import { Link } from "react-router-dom";
+import AssignCrewModal from "@/components/jobs/AssignCrewModal";
 
 const mockJobs = [
   {
@@ -77,6 +79,22 @@ const getStatusVariant = (status: string) => {
 };
 
 const Jobs = () => {
+  const [isAssignCrewModalOpen, setIsAssignCrewModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<typeof mockJobs[0] | null>(
+    null,
+  );
+
+  const handleAssignCrewClick = (job: typeof mockJobs[0]) => {
+    setSelectedJob(job);
+    setIsAssignCrewModalOpen(true);
+  };
+
+  const handleAssignSuccess = () => {
+    setIsAssignCrewModalOpen(false);
+    setSelectedJob(null);
+    // In a real app, we would refetch the jobs data here.
+  };
+
   return (
     <Layout>
       <Tabs defaultValue="list">
@@ -113,7 +131,9 @@ const Jobs = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Customer</TableHead>
-                    <TableHead className="hidden md:table-cell">Address</TableHead>
+                    <TableHead className="hidden md:table-cell">
+                      Address
+                    </TableHead>
                     <TableHead className="hidden sm:table-cell">Date</TableHead>
                     <TableHead>Crew</TableHead>
                     <TableHead>Status</TableHead>
@@ -126,7 +146,9 @@ const Jobs = () => {
                       <TableCell className="font-medium">
                         {job.customerName}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell">{job.address}</TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {job.address}
+                      </TableCell>
                       <TableCell className="hidden sm:table-cell">
                         {new Date(job.date).toLocaleDateString()}
                       </TableCell>
@@ -147,7 +169,11 @@ const Jobs = () => {
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem>View Details</DropdownMenuItem>
-                            <DropdownMenuItem>Assign Crew</DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleAssignCrewClick(job)}
+                            >
+                              Assign Crew
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem>Mark as Complete</DropdownMenuItem>
                           </DropdownMenuContent>
@@ -183,6 +209,12 @@ const Jobs = () => {
           </Card>
         </TabsContent>
       </Tabs>
+      <AssignCrewModal
+        isOpen={isAssignCrewModalOpen}
+        onOpenChange={setIsAssignCrewModalOpen}
+        job={selectedJob}
+        onSuccess={handleAssignSuccess}
+      />
     </Layout>
   );
 };
