@@ -13,6 +13,7 @@ import { QuotesModule } from "./modules/quotes/quotes.module";
 import { InvoicesModule } from "./modules/invoices/invoices.module";
 import { WebhooksModule } from "./modules/webhooks/webhooks.module";
 import { JobsModule } from "./modules/jobs/jobs.module";
+import { NwsModule } from "./modules/nws/nws.module";
 
 @Module({
   imports: [
@@ -24,11 +25,11 @@ import { JobsModule } from "./modules/jobs/jobs.module";
     LeadsModule,
     QuoteRequestsModule,
     TasksModule,
-    QueuesModule,
     QuotesModule,
     JobsModule,
     InvoicesModule,
     WebhooksModule,
+    NwsModule,
   ],
   controllers: [],
   providers: [],
@@ -37,7 +38,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(TenantMiddleware)
-      .exclude("healthz", "readyz", "v1/webhooks/clerk")
+      .exclude("healthz", "readyz", "v1/webhooks/clerk", "v1/nws/ingest")
       .forRoutes("*");
   }
 }

@@ -1,7 +1,7 @@
 import { Controller, Post, Req, Headers, BadRequestException } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { StripeService } from "../invoices/stripe.service";
-import { getDb, schema, eq } from "@/db/index";
+import { getDb, schema, eq } from "@treeproai/db";
 import Stripe from "stripe";
 
 @ApiTags("Webhooks")

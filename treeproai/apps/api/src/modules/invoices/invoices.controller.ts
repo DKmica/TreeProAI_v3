@@ -1,5 +1,5 @@
 import { Controller, Post, Param, Req, UseGuards, Body, NotFoundException } from "@nestjs/common";
-import { getDb, schema, eq } from "@/db/index";
+import { getDb, schema, eq } from "@treeproai/db";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "@/common/guards/roles.guard";
 import { Roles } from "@/common/decorators/roles.decorator";

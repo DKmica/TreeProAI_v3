@@ -1,6 +1,6 @@
 import { Controller, Post, Get, Body, Req, UseGuards, Param } from "@nestjs/common";
 import { z } from "zod";
-import { getDb, schema, packEncrypted, eq, decryptPII } from "@/db/index";
+import { getDb, schema, packEncrypted, eq, decryptPII } from "@treeproai/db";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "@/common/guards/roles.guard";
 import { Roles } from "@/common/decorators/roles.decorator";

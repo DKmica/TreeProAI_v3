@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { Client, TravelMode } from "@googlemaps/google-maps-services-js";
-import { getDb, schema, eq, and } from "@/db/index";
+import { getDb, schema, eq, and } from "@treeproai/db";
 
 @Injectable()
 export class SchedulingService {
